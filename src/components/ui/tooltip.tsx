@@ -8,9 +8,11 @@ const TooltipProvider = TooltipPrimitive.Provider
 const Tooltip = TooltipPrimitive.Root
 const TooltipTrigger = TooltipPrimitive.Trigger
 
+type TooltipContentProps = React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+
 const TooltipContent = React.forwardRef
-  HTMLDivElement,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+  any,
+  TooltipContentProps
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <TooltipPrimitive.Content
     ref={ref}
