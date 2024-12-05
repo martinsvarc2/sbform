@@ -273,11 +273,11 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
   const availableStates = useMemo(() => US_STATES, [])
 
   const availableCities = useMemo(() => 
-    formState.selectedStates.length === 1
-      ? MOCK_CITIES[formState.selectedStates[0]] || []
-      : [],
-    [formState.selectedStates]
-  );
+  formState.selectedStates.length === 1 && !hasCustomSelector(formState.selectedStates[0])
+    ? MOCK_CITIES[formState.selectedStates[0]] || []
+    : [],
+  [formState.selectedStates]
+);
 
 // Beginning of render/return
   return (
@@ -505,6 +505,25 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
     * You can select up to 10 cities only when a single state is selected.
   </p>
 
+{/* Selected Cities Pills */}
+  {formState.selectedCities.length > 0 && (
+    <div className="mb-2 sm:mb-4">
+      <div className="flex flex-wrap gap-2">
+        {formState.selectedCities.map((city) => (
+          <button
+            key={city}
+            type="button"
+            onClick={() => handleRemoveCity(city)}
+            className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+          >
+            {city}
+            <X className="h-3 w-3 sm:h-4 sm:w-4" />
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+
  {/* Dynamic City Selector */}
   {formState.selectedStates.length === 1 && (
     hasCustomSelector(formState.selectedStates[0]) ? (
@@ -546,6 +565,13 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
                 <SelectItem 
                   key={city} 
                   value={city}
+                  className={cn(
+                    "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
+                    formState.selectedCities.includes(city) 
+                      ? "bg-[#EECC6E] text-black" 
+                      : "hover:bg-[#EECC6E]/10"
+                  )}
+                  disabled={formState.selectedCities.includes(city)}
                 >
                   {city}
                 </SelectItem>
