@@ -10,12 +10,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import * as PopoverPrimitive from "@radix-ui/react-popover"
+import * as Popover from "@radix-ui/react-popover"
 import { Badge } from "@/components/ui/badge"
 
 interface MultiComboboxProps {
@@ -49,8 +44,8 @@ export function MultiCombobox({
 
   return (
     <div className="flex flex-col gap-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger asChild>
           <Button
             variant="outline"
             role="combobox"
@@ -60,9 +55,13 @@ export function MultiCombobox({
             {selected.length === 0 ? placeholder : `${selected.length} selected`}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        </PopoverTrigger>
-        <PopoverContent align="start" className="w-full p-0">
-          <PopoverPrimitive.Portal>
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content 
+            align="start" 
+            sideOffset={4}
+            className="z-50 w-full min-w-[200px] overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+          >
             <Command>
               <CommandInput placeholder="Search..." />
               <CommandEmpty>No results found.</CommandEmpty>
@@ -84,9 +83,9 @@ export function MultiCombobox({
                 ))}
               </CommandGroup>
             </Command>
-          </PopoverPrimitive.Portal>
-        </PopoverContent>
-      </Popover>
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selected.map((item) => (
