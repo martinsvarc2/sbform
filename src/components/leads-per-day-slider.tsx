@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 interface LeadsPerDaySliderProps {
   value: number
   onChange: (value: number) => void
+  textSize?: string
 }
 
 const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({ value, onChange }) => {
