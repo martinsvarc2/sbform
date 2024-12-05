@@ -505,25 +505,6 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
     * You can select up to 10 cities only when a single state is selected.
   </p>
 
-  {/* Selected Cities Pills */}
-  {formState.selectedCities.length > 0 && (
-    <div className="mb-2 sm:mb-4">
-      <div className="flex flex-wrap gap-2">
-        {formState.selectedCities.map((city) => (
-          <button
-            key={city}
-            type="button"
-            onClick={() => handleRemoveCity(city)}
-            className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
-          >
-            {city}
-            <X className="h-3 w-3 sm:h-4 sm:w-4 opacity-75" />
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
-
  {/* Dynamic City Selector */}
   {formState.selectedStates.length === 1 && (
     hasCustomSelector(formState.selectedStates[0]) ? (
@@ -596,56 +577,6 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
                   </div>
                 )}
 
-                {/* City Selection Dropdown */}
-                <div className="relative">
-                  <Select 
-                    onValueChange={handleCityChange} 
-                    disabled={formState.selectedStates.length !== 1}
-                  >
-                    <SelectTrigger 
-                      className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
-                    >
-                      <div className="flex justify-between items-center w-full font-manrope">
-                        <SelectValue placeholder={formState.selectedStates.length !== 1 ? "Select one state first" : "Select cities"} />
-                        <div className="flex items-center gap-1 font-manrope">
-                          <span className="text-[#EECC6E]/70 text-xs sm:text-sm">
-                            {formState.selectedCities.length}/10
-                          </span>
-                        </div>
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20 font-manrope">
-                      <ScrollArea className="h-[200px] sm:h-[300px]">
-                        {availableCities.map((city) => (
-                          <SelectItem 
-                            key={city} 
-                            value={city} 
-                            className={cn(
-                              "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
-                              formState.selectedCities.includes(city) 
-                                ? "bg-[#EECC6E] text-black" 
-                                : "hover:bg-[#EECC6E]/10",
-                              formState.selectedCities.length >= 10 && !formState.selectedCities.includes(city)
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            )}
-                            disabled={formState.selectedCities.length >= 10 && !formState.selectedCities.includes(city)}
-                          >
-                            <div className="flex items-center justify-between w-full font-manrope">
-                              <span>{city}</span>
-                              {formState.selectedCities.includes(city) && (
-                                <Check className="h-4 w-4" />
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </ScrollArea>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          )}
 {/* ZIP Code Input Section */}
           {formState.targetingType === 'zipCode' && (
             <div className="space-y-4">
