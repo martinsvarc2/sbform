@@ -115,6 +115,9 @@ US_STATES.forEach(state => {
 })
 
 const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
+
+console.log("MOCK_CITIES for Alaska:", MOCK_CITIES["Alaska"])
+
   const [formState, setFormState] = useState<FormState>({
     firstName: '',
     lastName: '',
@@ -269,12 +272,16 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
   // Memoized values
   const availableStates = useMemo(() => US_STATES, [])
 
-  const availableCities = useMemo(() => 
-  formState.selectedStates.length === 1 && !hasCustomSelector(formState.selectedStates[0])
-    ? MOCK_CITIES[formState.selectedStates[0]] || []
-    : [],
-  [formState.selectedStates]
-);
+  const availableCities = useMemo(() => {
+    const state = formState.selectedStates[0]
+    console.log("Selected state:", state)
+    console.log("Has custom selector:", hasCustomSelector(state))
+    console.log("Generated cities:", MOCK_CITIES[state])
+    
+    return formState.selectedStates.length === 1 && !hasCustomSelector(formState.selectedStates[0])
+      ? MOCK_CITIES[formState.selectedStates[0]] || []
+      : []
+  }, [formState.selectedStates])
 
 // Beginning of render/return
   return (
