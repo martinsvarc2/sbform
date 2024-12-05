@@ -682,7 +682,6 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
           </Button>
         </Card>
       </form>
-    </div>
   )
 }
 
