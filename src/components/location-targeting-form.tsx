@@ -227,22 +227,6 @@ const handleRemoveState = (stateToRemove: string) => {
     }))
   }
 
-const handleCityChange = (city: string) => {
-  setFormState(prev => {
-    if (prev.selectedCities.includes(city)) {
-      return {
-        ...prev,
-        selectedCities: prev.selectedCities.filter(c => c !== city)
-      };
-    } else if (prev.selectedCities.length < 10) {
-      return {
-        ...prev,
-        selectedCities: [...prev.selectedCities, city]
-      };
-    }
-    return prev;
-  });
-}
 
   const handleZipCodesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 5);
@@ -285,6 +269,10 @@ const handleCityChange = (city: string) => {
     setTimeout(() => {
       setTestDataText("Send test data");
     }, 5000);
+  };
+
+const handleStateCitySelect = (city: string) => {
+    handleCityChange(city);
   };
 
   // Memoized values
