@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, lazy, Suspense } from "react"
 import { 
   Map, 
   Building2, 
@@ -46,6 +46,74 @@ const US_STATES = [
   "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
   "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ]
+
+const hasCustomSelector = (state: string): boolean => {
+  return state in STATE_COMPONENTS
+}
+
+const generateCities = (prefix: string) => {
+  if (hasCustomSelector(prefix)) return [] // Don't generate mock cities for states with real selectors
+  return Array.from({ length: 200 }, (_, i) => `${prefix} City ${i + 1}`)
+}
+
+const MOCK_CITIES: { [key: string]: string[] } = {}
+US_STATES.forEach(state => {
+  MOCK_CITIES[state] = generateCities(state)
+})
+
+const STATE_COMPONENTS = {
+  'Alabama': lazy(() => import('./alabama-city-selector')),
+  'Alaska': lazy(() => import('./alaska-city-selector')),
+  'Arizona': lazy(() => import('./arizona-city-selector')),
+  'Arkansas': lazy(() => import('./arkansas-city-selector')),
+  'California': lazy(() => import('./california-city-selector')),
+  'Colorado': lazy(() => import('./colorado-city-selector')),
+  'Connecticut': lazy(() => import('./connecticut-city-selector')),
+  'Delaware': lazy(() => import('./delaware-city-selector')),
+  'Florida': lazy(() => import('./florida-city-selector')),
+  'Georgia': lazy(() => import('./georgia-city-selector')),
+  'Hawaii': lazy(() => import('./hawaii-city-selector')),
+  'Idaho': lazy(() => import('./idaho-city-selector')),
+  'Illinois': lazy(() => import('./illinois-city-selector')),
+  'Indiana': lazy(() => import('./indiana-city-selector')),
+  'Iowa': lazy(() => import('./iowa-city-selector')),
+  'Kansas': lazy(() => import('./kansas-city-selector')),
+  'Kentucky': lazy(() => import('./kentucky-city-selector')),
+  'Louisiana': lazy(() => import('./louisiana-city-selector')),
+  'Maine': lazy(() => import('./maine-city-selector')),
+  'Maryland': lazy(() => import('./maryland-city-selector')),
+  'Massachusetts': lazy(() => import('./massachusetts-city-selector')),
+  'Michigan': lazy(() => import('./michigan-city-selector')),
+  'Minnesota': lazy(() => import('./minnesota-city-selector')),
+  'Mississippi': lazy(() => import('./mississippi-city-selector')),
+  'Missouri': lazy(() => import('./missouri-city-selector')),
+  'Montana': lazy(() => import('./montana-city-selector')),
+  'Nebraska': lazy(() => import('./nebraska-city-selector')),
+  'Nevada': lazy(() => import('./nevada-city-selector')),
+  'New Hampshire': lazy(() => import('./new-hampshire-city-selector')),
+  'New Jersey': lazy(() => import('./new-jersey-city-selector')),
+  'New Mexico': lazy(() => import('./new-mexico-city-selector')),
+  'New York': lazy(() => import('./new-york-city-selector')),
+  'North Carolina': lazy(() => import('./north-carolina-city-selector')),
+  'North Dakota': lazy(() => import('./north-dakota-city-selector')),
+  'Ohio': lazy(() => import('./ohio-city-selector')),
+  'Oklahoma': lazy(() => import('./oklahoma-city-selector')),
+  'Oregon': lazy(() => import('./oregon-city-selector')),
+  'Pennsylvania': lazy(() => import('./pennsylvania-city-selector')),
+  'Rhode Island': lazy(() => import('./rhode-island-city-selector')),
+  'South Carolina': lazy(() => import('./south-carolina-city-selector')),
+  'South Dakota': lazy(() => import('./south-dakota-city-selector')),
+  'Tennessee': lazy(() => import('./tennessee-city-selector')),
+  'Texas': lazy(() => import('./texas-city-selector')),
+  'Utah': lazy(() => import('./utah-city-selector')),
+  'Vermont': lazy(() => import('./vermont-city-selector')),
+  'Virginia': lazy(() => import('./virginia-city-selector')),
+  'Washington': lazy(() => import('./washington-city-selector')),
+  'West Virginia': lazy(() => import('./west-virginia-city-selector')),
+  'Wisconsin': lazy(() => import('./wisconsin-city-selector')),
+  'Wyoming': lazy(() => import('./wyoming-city-selector'))
+} as const;
+
 
 const generateCities = (prefix: string) => {
   return Array.from({ length: 200 }, (_, i) => `${prefix} City ${i + 1}`)
@@ -163,6 +231,10 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
       selectedCities: prev.selectedCities.filter(city => city !== cityToRemove)
     }))
   }
+
+const handleStateCitySelect = (city: { name: string; rank: number }) => {
+  handleCityChange(city.name)
+}
 
   const handleZipCodesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 5);
@@ -436,12 +508,56 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
 
               {/* City Selection Section */}
               <div className="space-y-4">
-                <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
-                  Select By Cities
-                </Label>
-                <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
-                  * You can select up to 10 cities only when a single state is selected.
-                </p>
+  <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+    Select By Cities
+  </Label>
+  <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
+    * You can select up to 10 cities only when a single state is selected.
+  </p>
+
+  {/* Selected Cities Pills */}
+  {formState.selectedCities.length > 0 && (
+    <div className="mb-2 sm:mb-4">
+      <div className="flex flex-wrap gap-2">
+        {formState.selectedCities.map((city) => (
+          <button
+            key={city}
+            type="button"
+            onClick={() => handleRemoveCity(city)}
+            className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+          >
+            {city}
+            <X className="h-3 w-3 sm:h-4 sm:w-4 opacity-75" />
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* Dynamic City Selector */}
+  {formState.selectedStates.length === 1 && (
+    hasCustomSelector(formState.selectedStates[0]) ? (
+      <Suspense fallback={
+        <div className="h-[200px] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
+        </div>
+      }>
+        {(() => {
+          const StateSelector = STATE_COMPONENTS[formState.selectedStates[0]]
+          return (
+            <StateSelector
+              onCitySelect={handleStateCitySelect}
+              selectedCities={formState.selectedCities}
+            />
+          )
+        })()}
+      </Suspense>
+    ) : (
+      <div className="relative">
+        <Select 
+          onValueChange={handleCityChange} 
+          disabled={formState.selectedStates.length !== 1}
+        >
 
                 {/* Selected Cities Pills */}
                 {formState.selectedCities.length > 0 && (
