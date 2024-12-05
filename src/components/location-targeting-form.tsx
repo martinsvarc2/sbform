@@ -558,25 +558,6 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
   )}
 </div>
 
-                {/* Selected Cities Pills */}
-                {formState.selectedCities.length > 0 && (
-                  <div className="mb-2 sm:mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {formState.selectedCities.map((city) => (
-                        <button
-                          key={city}
-                          type="button"
-                          onClick={() => handleRemoveCity(city)}
-                          className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
-                        >
-                          {city}
-                          <X className="h-3 w-3 sm:h-4 sm:w-4 opacity-75" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
 {/* ZIP Code Input Section */}
           {formState.targetingType === 'zipCode' && (
             <div className="space-y-4">
