@@ -271,9 +271,9 @@ const handleRemoveState = (stateToRemove: string) => {
     }, 5000);
   };
 
-const handleStateCitySelect = (city: string) => {
-    handleCityChange(city);
-  };
+const handleStateCitySelect = (city: { name: string }) => {
+  handleCityChange(city.name);
+};
 
   // Memoized values
   const availableStates = useMemo(() => US_STATES, [])
