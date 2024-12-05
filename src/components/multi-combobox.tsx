@@ -10,7 +10,6 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command"
-import * as PopoverPrimitive from "@radix-ui/react-popover"
 import { Badge } from "@/components/ui/badge"
 
 interface MultiComboboxProps {
@@ -29,6 +28,7 @@ export function MultiCombobox({
   maxItems = Infinity
 }: MultiComboboxProps) {
   const [open, setOpen] = React.useState(false)
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   const handleSelect = (value: string) => {
     if (selected.includes(value)) {
@@ -36,6 +36,7 @@ export function MultiCombobox({
     } else if (selected.length < maxItems) {
       onChange([...selected, value])
     }
+    setOpen(false)
   }
 
   const handleRemove = (value: string) => {
@@ -43,28 +44,24 @@ export function MultiCombobox({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
-        <PopoverPrimitive.Trigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between text-left font-normal"
-          >
-            {selected.length === 0 ? placeholder : `${selected.length} selected`}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverPrimitive.Trigger>
+    <div className="flex flex-col gap-2" ref={containerRef}>
+      <div className="relative">
+        <Button
+          type="button"
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between text-left font-normal"
+          onClick={() => setOpen(!open)}
+        >
+          {selected.length === 0 ? placeholder : `${selected.length} selected`}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
 
-        <PopoverPrimitive.Portal>
-          <PopoverPrimitive.Content
-            align="start"
-            sideOffset={4}
-            className="w-[200px] overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
-          >
+        {open && (
+          <div className="absolute z-50 mt-1 w-full min-w-[200px] overflow-hidden rounded-md border bg-popover shadow-md">
             <Command>
-              <CommandInput placeholder="Search..." />
+              <CommandInput placeholder="Search..." autoFocus />
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup className="max-h-64 overflow-auto">
                 {options.map((option) => (
@@ -84,9 +81,9 @@ export function MultiCombobox({
                 ))}
               </CommandGroup>
             </Command>
-          </PopoverPrimitive.Content>
-        </PopoverPrimitive.Portal>
-      </PopoverPrimitive.Root>
+          </div>
+        )}
+      </div>
 
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-2">
