@@ -11,11 +11,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import * as Popover from "@radix-ui/react-popover"
 import { Badge } from "@/components/ui/badge"
 
 interface MultiComboboxProps {
