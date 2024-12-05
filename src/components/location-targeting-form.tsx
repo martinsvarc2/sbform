@@ -168,35 +168,32 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
 
 // More handlers
   const handleStateChange = (state: string) => {
-    setFormState(prev => {
-      if (prev.selectedStates.includes(state)) {
-        const newSelectedStates = prev.selectedStates.filter(s => s !== state);
-        const newSelectedCities = prev.selectedCities.filter(city => 
-          !MOCK_CITIES[state].includes(city)
-        );
-        return {
-          ...prev,
-          selectedStates: newSelectedStates,
-          selectedCities: newSelectedCities
-        };
-      } else if (prev.selectedStates.length < 5) {
-        return {
-          ...prev,
-          selectedStates: [...prev.selectedStates, state],
-          selectedCities: []
-        };
-      }
-      return prev;
-    });
-  };
+  setFormState(prev => {
+    if (prev.selectedStates.includes(state)) {
+      // When removing a state, don't reference MOCK_CITIES
+      return {
+        ...prev,
+        selectedStates: prev.selectedStates.filter(s => s !== state),
+        selectedCities: [] // Just clear all cities when state changes
+      };
+    } else if (prev.selectedStates.length < 5) {
+      return {
+        ...prev,
+        selectedStates: [...prev.selectedStates, state],
+        selectedCities: [] // Clear cities when adding a new state
+      };
+    }
+    return prev;
+  });
+};
 
-  const handleRemoveState = (stateToRemove: string) => {
-    setFormState(prev => ({
-      ...prev,
-      selectedStates: prev.selectedStates.filter(state => state !== stateToRemove),
-      selectedCities: prev.selectedCities.filter(city => !MOCK_CITIES[stateToRemove].includes(city))
-    }))
-  }
+const handleRemoveState = (stateToRemove: string) => {
+  setFormState(prev => ({
+    ...prev,
+    selectedStates: prev.selectedStates.filter(state => state !== stateToRemove),
+    selectedCities: [] // Just clear all cities when removing a state
+  }))
+}
 
   const handleCityChange = (city: string) => {
     setFormState(prev => {
