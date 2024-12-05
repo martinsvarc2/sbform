@@ -560,10 +560,9 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
           {/* Leads Per Day Slider */}
           <div className="space-y-2">
             <LeadsPerDaySlider
-              value={formState.leadsPerDay}
-              onChange={handleLeadsPerDayChange}
-              textSize="sm"
-            />
+  value={formState.leadsPerDay}
+  onChange={handleLeadsPerDayChange}
+/>
           </div>
 
 {/* Google Sheet URL Section */}
