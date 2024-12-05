@@ -25,8 +25,6 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8">
       <LocationTargetingForm onSubmit={handleSubmit} />
-    </div>
   )
 }
