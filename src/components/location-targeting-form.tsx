@@ -47,20 +47,6 @@ const US_STATES = [
   "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ]
 
-const hasCustomSelector = (state: string): boolean => {
-  return state in STATE_COMPONENTS
-}
-
-const generateCities = (prefix: string) => {
-  if (hasCustomSelector(prefix)) return [] // Don't generate mock cities for states with real selectors
-  return Array.from({ length: 200 }, (_, i) => `${prefix} City ${i + 1}`)
-}
-
-const MOCK_CITIES: { [key: string]: string[] } = {}
-US_STATES.forEach(state => {
-  MOCK_CITIES[state] = generateCities(state)
-})
-
 const STATE_COMPONENTS = {
   'Alabama': lazy(() => import('./alabama-city-selector')),
   'Alaska': lazy(() => import('./alaska-city-selector')),
@@ -114,8 +100,12 @@ const STATE_COMPONENTS = {
   'Wyoming': lazy(() => import('./wyoming-city-selector'))
 } as const;
 
+const hasCustomSelector = (state: string): boolean => {
+  return state in STATE_COMPONENTS
+}
 
 const generateCities = (prefix: string) => {
+  if (hasCustomSelector(prefix)) return [] // Don't generate mock cities for states with real selectors
   return Array.from({ length: 200 }, (_, i) => `${prefix} City ${i + 1}`)
 }
 
