@@ -104,16 +104,6 @@ const hasCustomSelector = (state: string): boolean => {
   return state in STATE_COMPONENTS
 }
 
-const generateCities = (prefix: string) => {
-  if (hasCustomSelector(prefix)) return [] // Don't generate mock cities for states with real selectors
-  return Array.from({ length: 200 }, (_, i) => `${prefix} City ${i + 1}`)
-}
-
-const MOCK_CITIES: { [key: string]: string[] } = {}
-US_STATES.forEach(state => {
-  MOCK_CITIES[state] = generateCities(state)
-})
-
 const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
 
 console.log("MOCK_CITIES for Alaska:", MOCK_CITIES["Alaska"])
@@ -271,17 +261,6 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
 
   // Memoized values
   const availableStates = useMemo(() => US_STATES, [])
-
-  const availableCities = useMemo(() => {
-    const state = formState.selectedStates[0]
-    console.log("Selected state:", state)
-    console.log("Has custom selector:", hasCustomSelector(state))
-    console.log("Generated cities:", MOCK_CITIES[state])
-    
-    return formState.selectedStates.length === 1 && !hasCustomSelector(formState.selectedStates[0])
-      ? MOCK_CITIES[formState.selectedStates[0]] || []
-      : []
-  }, [formState.selectedStates])
 
 // Beginning of render/return
   return (
@@ -501,92 +480,52 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
               </div>
 
               {/* City Selection Section */}
-<div className="space-y-4">
-  <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
-    Select By Cities
-  </Label>
-  <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
-    * You can select up to 10 cities only when a single state is selected.
-  </p>
+{formState.selectedStates.length === 1 && (
+  <div className="space-y-4">
+    <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+      Select By Cities
+    </Label>
+    <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
+      * You can select up to 10 cities only when a single state is selected.
+    </p>
 
-{/* Selected Cities Pills */}
-  {formState.selectedCities.length > 0 && (
-    <div className="mb-2 sm:mb-4">
-      <div className="flex flex-wrap gap-2">
-        {formState.selectedCities.map((city) => (
-          <button
-            key={city}
-            type="button"
-            onClick={() => handleRemoveCity(city)}
-            className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
-          >
-            {city}
-            <X className="h-3 w-3 sm:h-4 sm:w-4" />
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
-
- {/* Dynamic City Selector */}
-  {formState.selectedStates.length === 1 && (
-    hasCustomSelector(formState.selectedStates[0]) ? (
-      <Suspense fallback={
-        <div className="h-[200px] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
+    {/* Selected Cities Pills */}
+    {formState.selectedCities.length > 0 && (
+      <div className="mb-2 sm:mb-4">
+        <div className="flex flex-wrap gap-2">
+          {formState.selectedCities.map((city) => (
+            <button
+              key={city}
+              type="button"
+              onClick={() => handleRemoveCity(city)}
+              className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+            >
+              {city}
+              <X className="h-3 w-3 sm:h-4 sm:w-4" />
+            </button>
+          ))}
         </div>
-      }>
-        {(() => {
-          const StateSelector = STATE_COMPONENTS[formState.selectedStates[0]]
-          return (
-            <StateSelector
-              onCitySelect={handleStateCitySelect}
-              selectedCities={formState.selectedCities}
-            />
-          )
-        })()}
-      </Suspense>
-    ) : (
-      // Fallback for states without custom selectors
-      <div className="relative">
-        <Select 
-          onValueChange={handleCityChange} 
-          disabled={formState.selectedStates.length !== 1}
-        >
-          <SelectTrigger 
-            className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
-          >
-            <div className="flex justify-between items-center w-full font-manrope">
-              <SelectValue placeholder="Select cities" />
-              <span className="text-[#EECC6E]/70 text-xs sm:text-sm">
-                {formState.selectedCities.length}/10
-              </span>
-            </div>
-          </SelectTrigger>
-          <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20">
-            <ScrollArea className="h-[200px]">
-              {availableCities.map((city) => (
-                <SelectItem 
-                  key={city} 
-                  value={city}
-                  className={cn(
-                    "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
-                    formState.selectedCities.includes(city) 
-                      ? "bg-[#EECC6E] text-black" 
-                      : "hover:bg-[#EECC6E]/10"
-                  )}
-                  disabled={formState.selectedCities.includes(city)}
-                >
-                  {city}
-                </SelectItem>
-              ))}
-            </ScrollArea>
-          </SelectContent>
-        </Select>
       </div>
-    )
-  )}
-</div>
+    )}
+
+    {/* Dynamic City Selector */}
+    <Suspense fallback={
+      <div className="h-[200px] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
+      </div>
+    }>
+      {(() => {
+        const StateSelector = STATE_COMPONENTS[formState.selectedStates[0]]
+        return (
+          <StateSelector
+            onCitySelect={handleStateCitySelect}
+            selectedCities={formState.selectedCities}
+          />
+        )
+      })()}
+    </Suspense>
+  </div>
+)}
 
 {/* ZIP Code Input Section */}
           {formState.targetingType === 'zipCode' && (
