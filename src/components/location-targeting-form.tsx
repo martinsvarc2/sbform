@@ -209,8 +209,21 @@ const handleRemoveState = (stateToRemove: string) => {
     }))
   }
 
-const handleStateCitySelect = (city: { name: string; rank: number }) => {
-  handleCityChange(city.name)
+const handleCityChange = (city: string) => {
+  setFormState(prev => {
+    if (prev.selectedCities.includes(city)) {
+      return {
+        ...prev,
+        selectedCities: prev.selectedCities.filter(c => c !== city)
+      };
+    } else if (prev.selectedCities.length < 10) {
+      return {
+        ...prev,
+        selectedCities: [...prev.selectedCities, city]
+      };
+    }
+    return prev;
+  });
 }
 
   const handleZipCodesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,10 +274,10 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
 
 // Beginning of render/return
   return (
-      <form onSubmit={(e) => {
-        e.preventDefault()
-        onSubmit(formState)
-      }}>
+      <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  onSubmit(formState)
+}}>
         <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
           {/* Personal Information Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
