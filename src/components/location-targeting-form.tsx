@@ -105,9 +105,6 @@ const hasCustomSelector = (state: string): boolean => {
 }
 
 const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
-
-console.log("MOCK_CITIES for Alaska:", MOCK_CITIES["Alaska"])
-
   const [formState, setFormState] = useState<FormState>({
     firstName: '',
     lastName: '',
