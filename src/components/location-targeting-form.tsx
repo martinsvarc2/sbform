@@ -1,3 +1,4 @@
+// src/components/location-targeting-form.tsx
 "use client"
 
 import React, { useState, useMemo } from "react"
@@ -70,4 +71,613 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     "https://res.cloudinary.com/drkudvyog/image/upload/v1733273873/Tutorial_1_y4l0ud.png",
     "https://res.cloudinary.com/drkudvyog/image/upload/v1733273874/Tutorial_2_r0upko.png",
     "https://res.cloudinary.com/drkudvyog/image/upload/v1733274401/Tutorial_3_jlyyxe.png",
-    "https://res.cloudinar
+    "https://res.cloudinary.com/drkudvyog/image/upload/v1733273874/tutorial_4_llujtb.png",
+    "https://res.cloudinary.com/drkudvyog/image/upload/v1733273875/Tutorial_5_x3rmsj.png"
+  ]
+
+  const tutorialDescriptions = [
+    "1. Click the 'Share' button in the top right",
+    "2. Set the access to 'Anyone with the link'",
+    "3. Make sure that sharing permissions are set to 'Editor'",
+    "4. Copy the URL",
+    "5. Paste it into the form"
+  ]
+
+  // Event handlers
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormState(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleTargetingChange = (type: 'national' | 'state' | 'zipCode') => {
+    setFormState(prev => ({
+      ...prev,
+      targetingType: prev.targetingType === type ? null : type,
+      selectedStates: [],
+      selectedCities: [],
+      zipCodes: []
+    }))
+  }
+
+// More handlers
+  const handleStateChange = (state: string) => {
+    setFormState(prev => {
+      if (prev.selectedStates.includes(state)) {
+        const newSelectedStates = prev.selectedStates.filter(s => s !== state);
+        const newSelectedCities = prev.selectedCities.filter(city => 
+          !MOCK_CITIES[state].includes(city)
+        );
+        return {
+          ...prev,
+          selectedStates: newSelectedStates,
+          selectedCities: newSelectedCities
+        };
+      } else if (prev.selectedStates.length < 5) {
+        return {
+          ...prev,
+          selectedStates: [...prev.selectedStates, state],
+          selectedCities: []
+        };
+      }
+      return prev;
+    });
+  };
+
+  const handleRemoveState = (stateToRemove: string) => {
+    setFormState(prev => ({
+      ...prev,
+      selectedStates: prev.selectedStates.filter(state => state !== stateToRemove),
+      selectedCities: prev.selectedCities.filter(city => !MOCK_CITIES[stateToRemove].includes(city))
+    }))
+  }
+
+  const handleCityChange = (city: string) => {
+    setFormState(prev => {
+      if (prev.selectedCities.includes(city)) {
+        return {
+          ...prev,
+          selectedCities: prev.selectedCities.filter(c => c !== city)
+        };
+      } else if (prev.selectedCities.length < 10) {
+        return {
+          ...prev,
+          selectedCities: [...prev.selectedCities, city]
+        };
+      }
+      return prev;
+    });
+  }
+
+  const handleRemoveCity = (cityToRemove: string) => {
+    setFormState(prev => ({
+      ...prev,
+      selectedCities: prev.selectedCities.filter(city => city !== cityToRemove)
+    }))
+  }
+
+  const handleZipCodesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 5);
+    const currentZipCodes = [...formState.zipCodes];
+    currentZipCodes[parseInt(e.target.name)] = value;
+    setFormState(prev => ({ ...prev, zipCodes: currentZipCodes }));
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    const zipCodes = pastedText
+      .replace(/[^0-9\n,\s]/g, '')
+      .split(/[\n,\s]+/)
+      .filter(code => /^\d{5}$/.test(code))
+      .slice(0, 50);
+    
+    setFormState(prev => ({ ...prev, zipCodes }));
+  };
+
+  const addZipCode = () => {
+    if (formState.zipCodes.length < 50) {
+      setFormState(prev => ({ ...prev, zipCodes: [...prev.zipCodes, ''] }));
+    }
+  };
+
+  const removeZipCode = (index: number) => {
+    setFormState(prev => ({
+      ...prev,
+      zipCodes: prev.zipCodes.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleLeadsPerDayChange = (value: number) => {
+    setFormState(prev => ({ ...prev, leadsPerDay: value }))
+  }
+
+  const handleSendTestData = () => {
+    setTestDataText("Sent!");
+    setTimeout(() => {
+      setTestDataText("Send test data");
+    }, 5000);
+  };
+
+  // Memoized values
+  const availableStates = useMemo(() => US_STATES, [])
+
+  const availableCities = useMemo(() => 
+    formState.selectedStates.length === 1
+      ? MOCK_CITIES[formState.selectedStates[0]] || []
+      : [],
+    [formState.selectedStates]
+  );
+
+// Beginning of render/return
+  return (
+    <div className="min-h-screen bg-black p-4 sm:p-6 md:p-8">
+      <form onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit(formState)
+      }}>
+        <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
+          {/* Personal Information Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <Label htmlFor="firstName" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
+                <span className="text-[#EECC6E]">* </span>First Name
+              </Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                value={formState.firstName}
+                onChange={handleInputChange}
+                className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+                placeholder="John"
+              />
+            </div>
+            <div>
+              <Label htmlFor="lastName" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
+                <span className="text-[#EECC6E]">* </span>Last Name
+              </Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                value={formState.lastName}
+                onChange={handleInputChange}
+                className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+                placeholder="Smith"
+              />
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
+                <span className="text-[#EECC6E]">* </span>E-mail
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formState.email}
+                onChange={handleInputChange}
+                className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+                placeholder="john.smith@example.com"
+              />
+            </div>
+            <div>
+              <Label htmlFor="phoneNumber" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
+                <span className="text-[#EECC6E]">* </span>Phone Number
+              </Label>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                type="tel"
+                value={formState.phoneNumber}
+                onChange={handleInputChange}
+                className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+                placeholder="(555) 123-4567"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label htmlFor="campaignName" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
+                <span className="text-[#EECC6E]">* </span>Name of your campaign
+              </Label>
+              <Input
+                id="campaignName"
+                name="campaignName"
+                type="text"
+                value={formState.campaignName}
+                onChange={handleInputChange}
+                className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+                placeholder="My Campaign"
+              />
+            </div>
+          </div>
+{/* Targeting Options Section */}
+          <div className="space-y-4 sm:space-y-6">
+            <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+              <span className="text-[#EECC6E]">* </span>Do you want to target locations by:
+            </Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {/* National Targeting Option */}
+              <button
+                type="button"
+                onClick={() => handleTargetingChange('national')}
+                className={cn(
+                  "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
+                  formState.targetingType === 'national' 
+                    ? "border-[#EECC6E] bg-[#EECC6E]/10" 
+                    : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
+                )}
+              >
+                <Map className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 text-[#EECC6E]" />
+                <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-2 sm:mb-3">
+                  National Targeting
+                </h3>
+                <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
+                  Target the entire United States
+                </p>
+              </button>
+
+              {/* State Targeting Option */}
+              <button
+                type="button"
+                onClick={() => handleTargetingChange('state')}
+                className={cn(
+                  "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
+                  formState.targetingType === 'state' 
+                    ? "border-[#EECC6E] bg-[#EECC6E]/10" 
+                    : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
+                )}
+              >
+                <Building2 className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 text-[#EECC6E]" />
+                <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-2 sm:mb-3">
+                  State
+                </h3>
+                <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
+                  Target specific states and cities
+                </p>
+              </button>
+
+              {/* Zip Code Targeting Option */}
+              <button
+                type="button"
+                onClick={() => handleTargetingChange('zipCode')}
+                className={cn(
+                  "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
+                  formState.targetingType === 'zipCode' 
+                    ? "border-[#EECC6E] bg-[#EECC6E]/10" 
+                    : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
+                )}
+              >
+                <MapPin className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 text-[#EECC6E]" />
+                <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-2 sm:mb-3">
+                  Zip Code
+                </h3>
+                <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
+                  Target specific ZIP codes
+                </p>
+              </button>
+            </div>
+          </div>
+{/* State and City Selection Section */}
+          {formState.targetingType === 'state' && (
+            <div className="space-y-4 sm:space-y-6">
+              <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+                <span className="text-[#EECC6E]">* </span>Select By States
+              </Label>
+              <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
+                * You can select up to 5 states maximum
+              </p>
+              
+              {/* Selected States Pills */}
+              {formState.selectedStates.length > 0 && (
+                <div className="mb-2 sm:mb-4">
+                  <div className="flex flex-wrap gap-2">
+                    {formState.selectedStates.map((state) => (
+                      <button
+                        key={state}
+                        type="button"
+                        onClick={() => handleRemoveState(state)}
+                        className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+                      >
+                        {state}
+                        <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* State Selection Dropdown */}
+              <div className="relative">
+                <Select onValueChange={handleStateChange}>
+                  <SelectTrigger 
+                    className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
+                  >
+                    <div className="flex justify-between items-center w-full font-manrope">
+                      <SelectValue placeholder="Select State(s)" />
+                      <span className="text-[#EECC6E]/70 font-manrope text-xs sm:text-sm">
+                        {formState.selectedStates.length}/5
+                      </span>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20 font-manrope">
+                    <ScrollArea className="h-[200px] sm:h-[300px]">
+                      {availableStates.map((state) => (
+                        <SelectItem 
+                          key={state} 
+                          value={state} 
+                          className={cn(
+                            "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
+                            formState.selectedStates.includes(state) 
+                              ? "bg-[#EECC6E] text-black" 
+                              : "hover:bg-[#EECC6E]/10",
+                            formState.selectedStates.length >= 5 && !formState.selectedStates.includes(state)
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          )}
+                          disabled={formState.selectedStates.length >= 5 && !formState.selectedStates.includes(state)}
+                        >
+                          <div className="flex items-center justify-between w-full font-manrope">
+                            <span>{state}</span>
+                            {formState.selectedStates.includes(state) && (
+                              <Check className="h-4 w-4" />
+                            )}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </ScrollArea>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* City Selection Section */}
+              <div className="space-y-4">
+                <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+                  Select By Cities
+                </Label>
+                <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
+                  * You can select up to 10 cities only when a single state is selected.
+                </p>
+
+                {/* Selected Cities Pills */}
+                {formState.selectedCities.length > 0 && (
+                  <div className="mb-2 sm:mb-4">
+                    <div className="flex flex-wrap gap-2">
+                      {formState.selectedCities.map((city) => (
+                        <button
+                          key={city}
+                          type="button"
+                          onClick={() => handleRemoveCity(city)}
+                          className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+                        >
+                          {city}
+                          <X className="h-3 w-3 sm:h-4 sm:w-4 opacity-75" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* City Selection Dropdown */}
+                <div className="relative">
+                  <Select 
+                    onValueChange={handleCityChange} 
+                    disabled={formState.selectedStates.length !== 1}
+                  >
+                    <SelectTrigger 
+                      className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
+                    >
+                      <div className="flex justify-between items-center w-full font-manrope">
+                        <SelectValue placeholder={formState.selectedStates.length !== 1 ? "Select one state first" : "Select cities"} />
+                        <div className="flex items-center gap-1 font-manrope">
+                          <span className="text-[#EECC6E]/70 text-xs sm:text-sm">
+                            {formState.selectedCities.length}/10
+                          </span>
+                        </div>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20 font-manrope">
+                      <ScrollArea className="h-[200px] sm:h-[300px]">
+                        {availableCities.map((city) => (
+                          <SelectItem 
+                            key={city} 
+                            value={city} 
+                            className={cn(
+                              "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
+                              formState.selectedCities.includes(city) 
+                                ? "bg-[#EECC6E] text-black" 
+                                : "hover:bg-[#EECC6E]/10",
+                              formState.selectedCities.length >= 10 && !formState.selectedCities.includes(city)
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            )}
+                            disabled={formState.selectedCities.length >= 10 && !formState.selectedCities.includes(city)}
+                          >
+                            <div className="flex items-center justify-between w-full font-manrope">
+                              <span>{city}</span>
+                              {formState.selectedCities.includes(city) && (
+                                <Check className="h-4 w-4" />
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </ScrollArea>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+{/* ZIP Code Input Section */}
+          {formState.targetingType === 'zipCode' && (
+            <div className="space-y-4">
+              <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+                <span className="text-[#EECC6E]">* </span>List the ZIP codes for your campaign target:
+              </Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
+                {formState.zipCodes.map((zipCode, index) => (
+                  <div key={index} className="relative">
+                    <Input
+                      type="text"
+                      name={index.toString()}
+                      value={zipCode}
+                      onChange={handleZipCodesChange}
+                      onPaste={handlePaste}
+                      className="bg-black/50 border-[#EECC6E]/20 text-white text-lg sm:text-xl h-10 sm:h-12 text-center font-manrope"
+                      maxLength={5}
+                      placeholder="00000"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeZipCode(index)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#EECC6E] hover:text-[#EECC6E]/80 font-manrope"
+                    >
+                      <MinusCircle className="h-4 w-4 sm:h-6 sm:w-6" />
+                    </button>
+                  </div>
+                ))}
+                {formState.zipCodes.length < 50 && (
+                  <button
+                    type="button"
+                    onClick={addZipCode}
+                    className="bg-black/50 border-2 border-dashed border-[#EECC6E]/20 text-[#EECC6E] h-10 sm:h-12 rounded-md flex items-center justify-center hover:bg-[#EECC6E]/10 transition-colors font-manrope"
+                  >
+                    <PlusCircle className="h-6 w-6 sm:h-8 sm:w-8" />
+                  </button>
+                )}
+              </div>
+              <p className="text-xs sm:text-sm text-[#EECC6E]/70 font-manrope">
+                * A minimum of 1 valid ZIP code and a maximum of 50 valid ZIP codes must be provided.
+              </p>
+            </div>
+          )}
+
+          {/* Leads Per Day Slider */}
+          <div className="space-y-2">
+            <LeadsPerDaySlider
+              value={formState.leadsPerDay}
+              onChange={handleLeadsPerDayChange}
+              textSize="sm"
+            />
+          </div>
+
+{/* Google Sheet URL Section */}
+          <div className="space-y-2">
+            <Label htmlFor="googleSheetUrl" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3 flex items-center gap-2">
+              <span className="text-[#EECC6E]">* </span>Empty Google Sheet URL
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors">
+                    View proper format
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-[90vw] sm:max-w-2xl md:max-w-4xl bg-black/95 border-[#EECC6E]/20">
+                  <div className="p-4 sm:p-6">
+                    <div className="relative bg-black rounded-lg overflow-hidden">
+                      <div className="aspect-video relative">
+                        <Image
+                          src={tutorialImages[currentImageIndex]}
+                          alt={tutorialDescriptions[currentImageIndex]}
+                          layout="fill"
+                          objectFit="contain"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 bg-black/75 p-2 sm:p-4">
+                          <p className="text-white text-center font-manrope text-xs sm:text-sm">
+                            {tutorialDescriptions[currentImageIndex]}
+                          </p>
+                        </div>
+                        <div className="absolute inset-y-0 left-2 right-2 sm:left-4 sm:right-4 flex items-center justify-between pointer-events-none">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-full bg-black/50 text-white hover:bg-black/75 disabled:opacity-50 pointer-events-auto"
+                            onClick={() => setCurrentImageIndex(i => Math.max(0, i - 1))}
+                            disabled={currentImageIndex === 0}
+                          >
+                            <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-full bg-black/50 text-white hover:bg-black/75 disabled:opacity-50 pointer-events-auto"
+                            onClick={() => setCurrentImageIndex(i => Math.min(tutorialImages.length - 1, i + 1))}
+                            disabled={currentImageIndex === tutorialImages.length - 1}
+                          >
+                            <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex justify-center gap-2 mt-4">
+                        {tutorialImages.map((_, index) => (
+                          <button
+                            key={index}
+                            className={cn(
+                              "w-2 h-2 rounded-full transition-all",
+                              currentImageIndex === index ? "bg-[#EECC6E]" : "bg-[#EECC6E]/20"
+                            )}
+                            onClick={() => setCurrentImageIndex(index)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </Label>
+            <Input
+              id="googleSheetUrl"
+              name="googleSheetUrl"
+              type="url"
+              value={formState.googleSheetUrl}
+              onChange={handleInputChange}
+              className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+              placeholder="https://docs.google.com/spreadsheets/d/..."
+            />
+          </div>
+
+          {/* Webhook URL Section */}
+          <div className="space-y-2">
+            <Label htmlFor="webhookUrl" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3 flex items-center gap-2">
+              Webhook URL
+              <button
+                onClick={handleSendTestData}
+                className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors"
+              >
+                {testDataText}
+              </button>
+            </Label>
+            <Input
+              id="webhookUrl"
+              name="webhookUrl"
+              type="url"
+              value={formState.webhookUrl}
+              onChange={handleInputChange}
+              className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+              placeholder="https://example.com/webhook"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <Button 
+            type="submit" 
+            className="relative w-full h-14 overflow-hidden text-black font-manrope font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] animate-flow-colors" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-50" />
+            <span className="relative z-10">Order Now</span>
+            <svg className="magic-sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 5L13.5 8.5L17 9L13.5 9.5L14 13L12.5 10L9 10.5L11.5 9L10 5.5L12.5 8.5L14 5Z" fill="white">
+                <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="5s" repeatCount="indefinite"/>
+              </path>
+              <path d="M19 12L18.5 15.5L22 16L18.5 16.5L19 20L17.5 17L14 17.5L16.5 16L15 12.5L17.5 15.5L19 12Z" fill="white">
+                <animateTransform attributeName="transform" type="rotate" from="0 18 16" to="-360 18 16" dur="7s" repeatCount="indefinite"/>
+              </path>
+              <path d="M5 8L4.5 11.5L8 12L4.5 12.5L5 16L3.5 13L0 13.5L2.5 12L1 8.5L3.5 11.5L5 8Z" fill="white">
+                <animateTransform attributeName="transform" type="rotate" from="0 4 12" to="360 4 12" dur="6s" repeatCount="indefinite"/>
+              </path>
+            </svg>
+          </Button>
+        </Card>
+      </form>
+    </div>
+  )
+}
+
+export default LocationTargetingForm
+
