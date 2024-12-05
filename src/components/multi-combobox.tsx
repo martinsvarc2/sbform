@@ -45,8 +45,8 @@ export function MultiCombobox({
 
   return (
     <div className="flex flex-col gap-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger asChild>
           <Button
             variant="outline"
             role="combobox"
@@ -56,8 +56,8 @@ export function MultiCombobox({
             {selected.length === 0 ? placeholder : `${selected.length} selected`}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        </PopoverTrigger>
-       <PopoverContent align="start" className="w-full p-0">
+        </Popover.Trigger>
+        <Popover.Content className="w-full p-0">
           <Command>
             <CommandInput placeholder="Search..." />
             <CommandEmpty>No results found.</CommandEmpty>
