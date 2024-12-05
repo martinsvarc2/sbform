@@ -2,9 +2,15 @@
 import * as React from "react"
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from "@/lib/utils"
-import * as Popover from "@radix-ui/react-popover"
-import * as Command from "@radix-ui/react-command"
 import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import * as PopoverPrimitive from "@radix-ui/react-popover"
 import { Badge } from "@/components/ui/badge"
 
 interface MultiComboboxProps {
@@ -38,8 +44,8 @@ export function MultiCombobox({
 
   return (
     <div className="flex flex-col gap-2">
-      <Popover.Root open={open} onOpenChange={setOpen}>
-        <Popover.Trigger asChild>
+      <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+        <PopoverPrimitive.Trigger asChild>
           <Button
             variant="outline"
             role="combobox"
@@ -49,29 +55,23 @@ export function MultiCombobox({
             {selected.length === 0 ? placeholder : `${selected.length} selected`}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        </Popover.Trigger>
+        </PopoverPrimitive.Trigger>
 
-        <Popover.Portal>
-          <Popover.Content
+        <PopoverPrimitive.Portal>
+          <PopoverPrimitive.Content
             align="start"
             sideOffset={4}
-            className="z-50 w-[200px] overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+            className="w-[200px] overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
           >
-            <Command.Root className="w-full">
-              <Command.Input 
-                placeholder="Search..."
-                className="flex h-10 w-full rounded-md bg-transparent py-3 px-4 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <Command.Empty className="py-6 text-center text-sm">
-                No results found.
-              </Command.Empty>
-              <Command.Group className="max-h-64 overflow-auto p-1">
+            <Command>
+              <CommandInput placeholder="Search..." />
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup className="max-h-64 overflow-auto">
                 {options.map((option) => (
-                  <Command.Item
+                  <CommandItem
                     key={option}
                     value={option}
                     onSelect={() => handleSelect(option)}
-                    className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
                   >
                     <Check
                       className={cn(
@@ -80,13 +80,13 @@ export function MultiCombobox({
                       )}
                     />
                     {option}
-                  </Command.Item>
+                  </CommandItem>
                 ))}
-              </Command.Group>
-            </Command.Root>
-          </Popover.Content>
-        </Popover.Portal>
-      </Popover.Root>
+              </CommandGroup>
+            </Command>
+          </PopoverPrimitive.Content>
+        </PopoverPrimitive.Portal>
+      </PopoverPrimitive.Root>
 
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-2">
