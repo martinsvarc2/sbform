@@ -3,13 +3,7 @@ import * as React from "react"
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
+import { Command as CommandPrimitive } from 'cmdk'
 import { Badge } from "@/components/ui/badge"
 
 interface MultiComboboxProps {
@@ -28,7 +22,11 @@ export function MultiCombobox({
   maxItems = Infinity
 }: MultiComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  const containerRef = React.useRef<HTMLDivElement>(null)
+  const [search, setSearch] = React.useState("")
+
+  const filteredOptions = options.filter(option =>
+    option.toLowerCase().includes(search.toLowerCase())
+  )
 
   const handleSelect = (value: string) => {
     if (selected.includes(value)) {
@@ -44,7 +42,7 @@ export function MultiCombobox({
   }
 
   return (
-    <div className="flex flex-col gap-2" ref={containerRef}>
+    <div className="flex flex-col gap-2">
       <div className="relative">
         <Button
           type="button"
@@ -60,15 +58,24 @@ export function MultiCombobox({
 
         {open && (
           <div className="absolute z-50 mt-1 w-full min-w-[200px] overflow-hidden rounded-md border bg-popover shadow-md">
-            <Command>
-              <CommandInput placeholder="Search..." autoFocus />
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup className="max-h-64 overflow-auto">
-                {options.map((option) => (
-                  <CommandItem
+            <CommandPrimitive className="overflow-hidden">
+              <input
+                className="flex h-10 w-full rounded-md bg-transparent py-3 px-4 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoFocus
+              />
+              <div className="max-h-64 overflow-auto">
+                {filteredOptions.length === 0 && (
+                  <div className="py-6 text-center text-sm">No results found.</div>
+                )}
+                {filteredOptions.map((option) => (
+                  <CommandPrimitive.Item
                     key={option}
                     value={option}
                     onSelect={() => handleSelect(option)}
+                    className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
                   >
                     <Check
                       className={cn(
@@ -77,10 +84,10 @@ export function MultiCombobox({
                       )}
                     />
                     {option}
-                  </CommandItem>
+                  </CommandPrimitive.Item>
                 ))}
-              </CommandGroup>
-            </Command>
+              </div>
+            </CommandPrimitive>
           </div>
         )}
       </div>
