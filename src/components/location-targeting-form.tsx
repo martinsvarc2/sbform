@@ -497,7 +497,7 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
               </div>
 
               {/* City Selection Section */}
-              <div className="space-y-4">
+<div className="space-y-4">
   <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
     Select By Cities
   </Label>
@@ -524,7 +524,7 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
     </div>
   )}
 
-  {/* Dynamic City Selector */}
+ {/* Dynamic City Selector */}
   {formState.selectedStates.length === 1 && (
     hasCustomSelector(formState.selectedStates[0]) ? (
       <Suspense fallback={
@@ -543,11 +543,39 @@ const handleStateCitySelect = (city: { name: string; rank: number }) => {
         })()}
       </Suspense>
     ) : (
+      // Fallback for states without custom selectors
       <div className="relative">
         <Select 
           onValueChange={handleCityChange} 
           disabled={formState.selectedStates.length !== 1}
         >
+          <SelectTrigger 
+            className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
+          >
+            <div className="flex justify-between items-center w-full font-manrope">
+              <SelectValue placeholder="Select cities" />
+              <span className="text-[#EECC6E]/70 text-xs sm:text-sm">
+                {formState.selectedCities.length}/10
+              </span>
+            </div>
+          </SelectTrigger>
+          <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20">
+            <ScrollArea className="h-[200px]">
+              {availableCities.map((city) => (
+                <SelectItem 
+                  key={city} 
+                  value={city}
+                >
+                  {city}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+      </div>
+    )
+  )}
+</div>
 
                 {/* Selected Cities Pills */}
                 {formState.selectedCities.length > 0 && (
