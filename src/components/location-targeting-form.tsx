@@ -122,7 +122,7 @@ const hasCustomSelector = (state: string): boolean => {
   return state in STATE_COMPONENTS
 }
 
-const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
+const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {  
   const [formState, setFormState] = useState<FormState>({
     firstName: '',
     lastName: '',
@@ -136,7 +136,7 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     leadsPerDay: 10,
     googleSheetUrl: '',
     webhookUrl: ''
-  })
+  });
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [testDataText, setTestDataText] = useState("Send test data")
@@ -279,12 +279,14 @@ const handleStateCitySelect = (city: { name: string }) => {
   const availableStates = useMemo(() => US_STATES, [])
 
 // Beginning of render/return
-  return (
-    <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        onSubmit(formState)
-    }}>
-        <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
+ return (
+    <form 
+      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        onSubmit(formState);
+      }}
+    >
+      <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
           {/* Personal Information Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
@@ -696,7 +698,7 @@ const handleStateCitySelect = (city: { name: string }) => {
           </Button>
         </Card>
       </form>
-  )
-}
+  );
+};
 
-export default LocationTargetingForm
+export default LocationTargetingForm;
