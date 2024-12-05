@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap');
+
+:root {
+  --font-manrope: 'Manrope', sans-serif;
+}
+
+body {
+  font-family: var(--font-manrope);
+}
+
+@keyframes flowColors {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-flow-colors {
+  animation: flowColors 8s linear infinite;
+  background-size: 400% 400%;
+}
