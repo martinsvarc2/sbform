@@ -57,3 +57,15 @@ const MaineCitySelector: React.FC<MaineCitySelectorProps> = ({ onCitySelect, sel
               <SelectItem 
                 key={city.rank} 
                 value={city.name}
+>
+                {city.name}
+              </SelectItem>
+            ))}
+          </ScrollArea>
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
+export default MaineCitySelector
