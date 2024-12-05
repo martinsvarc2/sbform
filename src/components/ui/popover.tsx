@@ -6,10 +6,8 @@ import { cn } from "@/lib/utils"
 const Popover = PopoverPrimitive.Root
 const PopoverTrigger = PopoverPrimitive.Trigger
 
-const PopoverContent = React.forwardRef
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+// This is the key change - we're using a different approach to type definition
+const PopoverContent = React.forwardRef(({ className, align = "center", sideOffset = 4, ...props }: PopoverPrimitive.PopoverContentProps, ref: React.ForwardedRef<HTMLDivElement>) => (
   <PopoverPrimitive.Portal>
     <PopoverPrimitive.Content
       ref={ref}
@@ -22,7 +20,7 @@ const PopoverContent = React.forwardRef
       {...props}
     />
   </PopoverPrimitive.Portal>
-))
+)) as React.FC<PopoverPrimitive.PopoverContentProps>  // This type assertion is crucial
 
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
