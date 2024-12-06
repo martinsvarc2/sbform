@@ -32,31 +32,7 @@ import {
 import { cn } from "@/lib/utils"
 import LeadsPerDaySlider from './leads-per-day-slider'
 import Image from "next/image"
-import { FormState, LocationFormProps, CitySelector } from "@/types/form"
-
-interface FormState {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  campaignName: string;
-  targetingType: 'national' | 'state' | 'zipCode' | null;
-  selectedStates: string[];
-  selectedCities: string[];
-  zipCodes: string[];
-  leadsPerDay: number;
-  googleSheetUrl: string;
-  webhookUrl: string;
-}
-
-interface LocationFormProps {
-  onSubmit: (formData: FormState) => void;
-}
-
-interface CitySelector {
-  onCitySelect: (city: { name: string }) => void;
-  selectedCities: string[];
-}
+import { FormState, LocationFormProps, CitySelector, TargetingType } from "@/types/form"
 
 const STATE_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<CitySelector>>> = {
   'Alabama': lazy(() => import('./AlabamaCitySelector')),
