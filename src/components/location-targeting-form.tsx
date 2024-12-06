@@ -196,9 +196,9 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     });
   };
 
-  const handleStateCitySelect = (city: { name: string }) => {
-    handleCityChange(city.name);
-  };
+  const handleStateCitySelect = (city: { name: string; rank: number }) => {
+  handleCityChange(city.name);
+};
 
   const handleRemoveCity = (cityToRemove: string) => {
     setFormState(prev => ({
@@ -503,23 +503,22 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     )}
 
     {/* Dynamic City Selector Component */}
-    <Suspense fallback={
-      <div className="h-[200px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
-      </div>
-    }>
-      {formState.selectedStates[0] && 
-        STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS] && (
-          React.createElement(
-            STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS], 
-            {
-              onCitySelect: handleStateCitySelect,
-              selectedCities: formState.selectedCities
-            }
-          )
-      )}
-    </Suspense>
-  </div>
+   {formState.selectedStates[0] && (
+  <Suspense fallback={
+    <div className="h-[200px] flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
+    </div>
+  }>
+    {formState.selectedStates[0] in STATE_COMPONENTS && 
+      React.createElement(
+        STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS],
+        {
+          onCitySelect: handleStateCitySelect,
+          selectedCities: formState.selectedCities
+        }
+      )
+    }
+  </Suspense>
 )}
 
         {/* ZIP Code Input Section */}
