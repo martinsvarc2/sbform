@@ -282,11 +282,56 @@ const handleTotalLeadsChange = (value: number) => {
     }));
   };
 
-  const handleSendTestData = () => {
-    setTestDataText("Sent!");
-    setTimeout(() => {
+const handleSendTestData = async () => {
+    // Check if webhook URL exists
+    if (!formState.webhookUrl) {
+      alert('Please enter a webhook URL first');
+      return;
+    }
+
+    try {
+      // Create dummy test data
+      const testData = {
+        Created: new Date().toISOString().split('T')[0],
+        "First Name": "John",
+        "Last Name": "Smith",
+        "Address": "123 Main Street",
+        "City": "San Francisco",
+        "State": "CA",
+        "Primary Phone": "(415) 555-0123",
+        "Phone Type": "Mobile",
+        "Email 1": "john.smith@example.com",
+        "Email 2": "jsmith.work@example.com",
+        "Mobile 1": "(415) 555-0123",
+        "Mobile 2": "(415) 555-0124",
+        "Landline 1": "(415) 555-0125",
+        "Landline 2": "(415) 555-0126"
+      };
+
+      // Send POST request
+      const response = await fetch(formState.webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(testData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Visual feedback
+      setTestDataText("Sent!");
+      setTimeout(() => {
+        setTestDataText("Send test data");
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error sending test data:', error);
+      alert('Failed to send test data. Please check the webhook URL and try again.');
       setTestDataText("Send test data");
-    }, 5000);
+    }
   };
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
