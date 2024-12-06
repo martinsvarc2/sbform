@@ -300,7 +300,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     };
 
     // Wait for Make.com to complete its workflow (3 seconds should cover it)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
 
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
