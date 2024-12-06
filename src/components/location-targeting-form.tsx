@@ -299,9 +299,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    // Wait for Make.com to complete its workflow (3 seconds should cover it)
-    await new Promise(resolve => setTimeout(resolve, 10000));
-
+    // Show some loading state to the user (you might want to add a loading state to your component)
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
@@ -310,16 +308,37 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: JSON.stringify(submissionData)
     });
 
-    const redirectUrl = response.headers.get('Location');
+    // Parse the response
+    const data = await response.json();
     
-    if (redirectUrl) {
-      window.location.assign(redirectUrl);
-      return;
+    // Check if we have the headersArray in the response
+    if (data && data.headersArray) {
+      // Find the Location header
+      const locationHeader = data.headersArray.find((header: any) => 
+        header.Collection && 
+        header.Collection.Key === 'Location' && 
+        header.Collection.Value
+      );
+
+      if (locationHeader) {
+        // Get the redirect URL
+        const redirectUrl = locationHeader.Collection.Value;
+        
+        // Validate the URL before redirecting
+        if (redirectUrl.startsWith('https://buy.stripe.com/')) {
+          window.location.href = redirectUrl;
+          return;
+        }
+      }
     }
+
+    // If we reach here, something went wrong with the redirect URL
+    throw new Error('Invalid or missing redirect URL in response');
 
   } catch (error) {
     console.error('Submission error:', error);
-    alert('Failed to submit order. Please try again.');
+    // Show a more detailed error message
+    alert('Failed to process order. Please ensure all fields are filled correctly and try again. If the problem persists, please contact support.');
   }
 };
 
