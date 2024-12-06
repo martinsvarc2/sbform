@@ -251,6 +251,7 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   };
 
   const availableStates = useMemo(() => US_STATES, []);
+  
   return (
     <>
       <form
