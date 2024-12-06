@@ -324,19 +324,39 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Single request with data
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // Send initial request
+    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
-      body: formData,
-      mode: 'no-cors',
-      redirect: 'follow'
+      body: formData
     });
 
-    // Wait for Make.com to process (keeping this in case needed)
+    // Wait for Make.com to process (3 seconds)
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Redirect to Stripe (the URL should be configured in Make.com)
-    // Make.com should handle the redirect in its workflow
+    // Now get the response with the redirect URL
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+      method: 'GET'
+    });
+
+    const data = await response.json();
+    console.log('Response:', data);  // For debugging
+
+    // Check for the redirect URL in the custom headers
+    if (data?.headersArray) {
+      const locationHeader = data.headersArray.find(
+        (header: any) => 
+          header['1 Collection']?.Key === 'Location' && 
+          header['1 Collection']?.Value
+      );
+
+      if (locationHeader) {
+        const redirectUrl = locationHeader['1 Collection'].Value;
+        window.location.href = redirectUrl;
+        return;
+      }
+    }
+
+    throw new Error('Redirect URL not found in response');
 
   } catch (error) {
     console.error('Submission error:', error);
