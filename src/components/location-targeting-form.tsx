@@ -250,10 +250,14 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     }, 5000);
   };
 
-  const availableStates = useMemo(() => US_STATES, []);
-  
+  // Memoized states
+  const availableStates = useMemo(() => {
+    return US_STATES;
+  }, []);
+
+  // Render form
   return (
-    <>
+    <React.Fragment>
       <form
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
