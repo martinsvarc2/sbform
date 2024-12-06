@@ -320,20 +320,20 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     alert('Order submitted successfully!');
     
     setFormState({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      campaignName: '',
-      targetingType: null,
-      selectedStates: [],
-      selectedCities: [],
-      zipCodes: [],
-      leadsPerDay: 10,
-      googleSheetUrl: '',
-      webhookUrl: '',
-      totalLeads: ''
-    });
+  firstName: '',
+  lastName: '',
+  email: '',
+  phoneNumber: '',
+  campaignName: '',
+  targetingType: null,
+  selectedStates: [],
+  selectedCities: [],
+  zipCodes: [],
+  leadsPerDay: 10,
+  googleSheetUrl: '',
+  webhookUrl: '',
+  totalLeads: 0 
+});
 
   } catch (error) {
     console.error('Submission error:', error);
