@@ -456,7 +456,7 @@ setIsSubmitting(true);
     });
 
     // Wait for Make.com to process
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Parse response
     const data = await response.json();
