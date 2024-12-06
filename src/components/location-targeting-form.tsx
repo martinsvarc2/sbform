@@ -411,14 +411,6 @@ if (formState.targetingType === 'zipCode' && (formState.zipCodes.length === 0 ||
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
-
-const { isValid, message } = validateForm();
-  if (!isValid) {
-    alert(message);
-    return;
-  }
-
-setIsSubmitting(true);
   
   try {
     const date = new Date();
@@ -449,30 +441,26 @@ setIsSubmitting(true);
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Send request and wait for response
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       body: formData
     });
 
-    // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    // Parse response
     const data = await response.json();
     
-    // Redirect parent window if URL exists
-if (data && data.redirectUrl) {
-  window.parent.location.href = data.redirectUrl;
-  return;
-}
+    if (data?.redirectUrl) {
+      window.open(data.redirectUrl, '_blank');
+      return;
+    }
+
     throw new Error('No redirect URL in response');
 
- } catch (error) {
+  } catch (error) {
     console.error('Submission error:', error);
     alert('Failed to process order. Please try again or contact support.');
   } finally {
-    // Set loading state back to false in case of error
     setIsSubmitting(false);
   }
 };
