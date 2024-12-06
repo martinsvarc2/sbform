@@ -678,7 +678,7 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] animate-flow-colors" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-50" />
-            <span className="relative z-10">Order Now</span>
+            <span className="relative z-10">Place an Order</span>
             <svg 
               className="magic-sparkle" 
               viewBox="0 0 24 24" 
