@@ -334,8 +334,61 @@ const handleSendTestData = async () => {
     }
   };
 
+const validateForm = (): { isValid: boolean; message: string } => {
+  // Check for empty required fields
+  if (!formState.firstName.trim()) {
+    return { isValid: false, message: 'First Name is required' };
+  }
+  if (!formState.lastName.trim()) {
+    return { isValid: false, message: 'Last Name is required' };
+  }
+  if (!formState.email.trim()) {
+    return { isValid: false, message: 'Email is required' };
+  }
+  // Basic email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formState.email)) {
+    return { isValid: false, message: 'Please enter a valid email address' };
+  }
+  if (!formState.phoneNumber.trim()) {
+    return { isValid: false, message: 'Phone Number is required' };
+  }
+  // Phone number validation (XXX-XXX-XXXX format)
+  const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+  if (!phoneRegex.test(formState.phoneNumber)) {
+    return { isValid: false, message: 'Please enter a valid phone number (XXX-XXX-XXXX)' };
+  }
+  if (!formState.campaignName.trim()) {
+    return { isValid: false, message: 'Campaign Name is required' };
+  }
+  if (!formState.targetingType) {
+    return { isValid: false, message: 'Please select a targeting type' };
+  }
+  if (formState.leadsPerDay <= 0) {
+    return { isValid: false, message: 'Please specify leads per day' };
+  }
+  if (formState.totalLeads <= 0) {
+    return { isValid: false, message: 'Please specify total leads' };
+  }
+  if (!formState.googleSheetUrl.trim()) {
+    return { isValid: false, message: 'Google Sheet URL is required' };
+  }
+  // Basic URL validation for Google Sheet
+  if (!formState.googleSheetUrl.includes('docs.google.com/spreadsheets')) {
+    return { isValid: false, message: 'Please enter a valid Google Sheets URL' };
+  }
+
+  return { isValid: true, message: '' };
+};
+
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+
+const { isValid, message } = validateForm();
+  if (!isValid) {
+    alert(message);
+    return;
+  }
   
   try {
     const date = new Date();
