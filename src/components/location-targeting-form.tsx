@@ -454,14 +454,22 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const data = await response.json();
     
     if (data?.redirectUrl) {
-      // Get the top-most parent window
-      let targetWindow = window;
-      while (targetWindow !== targetWindow.parent) {
-        targetWindow = targetWindow.parent;
-      }
-      
+      // Get the top-most parent window in a type-safe way
+      const getTopWindow = (): Window => {
+        let currentWindow = window as Window;
+        try {
+          while (currentWindow.parent !== currentWindow && currentWindow.parent.location.href) {
+            currentWindow = currentWindow.parent;
+          }
+        } catch (e) {
+          // If we hit a cross-origin frame, return the highest accessible window
+          console.log('Reached highest accessible window');
+        }
+        return currentWindow;
+      };
+
       // Redirect the entire page to Stripe
-      targetWindow.location.href = data.redirectUrl;
+      getTopWindow().location.href = data.redirectUrl;
       return;
     }
 
