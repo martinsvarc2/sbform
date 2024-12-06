@@ -332,7 +332,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       leadsPerDay: 10,
       googleSheetUrl: '',
       webhookUrl: '',
-      totalLeads: 500
+      totalLeads: ''
     });
 
   } catch (error) {
