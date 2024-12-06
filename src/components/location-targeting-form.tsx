@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useState, useMemo, lazy, Suspense, useRef  } from "react"
+import { useState, useMemo, lazy, Suspense, useRef, useEffect  } from "react"
 import { 
   Map, 
   Building2, 
