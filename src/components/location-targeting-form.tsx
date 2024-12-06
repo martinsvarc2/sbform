@@ -307,36 +307,17 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: JSON.stringify(submissionData)
     });
 
-    // Check if the response has a Location header
-    const location = response.headers.get('Location');
+    // Get the response text
+    const responseText = await response.text();
     
-    if (location) {
-      // Redirect to the URL
-      window.location.href = location;
+    // If it's a valid Stripe URL, redirect
+    if (responseText.includes('stripe.com')) {
+      window.location.href = responseText.trim();
       return;
     }
 
-    // If no location header but response is ok
-    if (response.ok) {
-      alert('Order submitted successfully!');
-      setFormState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        campaignName: '',
-        targetingType: null,
-        selectedStates: [],
-        selectedCities: [],
-        zipCodes: [],
-        leadsPerDay: 10,
-        googleSheetUrl: '',
-        webhookUrl: '',
-        totalLeads: 0
-      });
-    } else {
-      throw new Error('Failed to submit form');
-    }
+    // If we get here, something went wrong
+    throw new Error('Invalid response');
 
   } catch (error) {
     console.error('Submission error:', error);
