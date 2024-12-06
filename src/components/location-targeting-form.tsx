@@ -275,6 +275,13 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     setFormState(prev => ({ ...prev, leadsPerDay: value }));
   };
 
+const handleTotalLeadsChange = (value: number) => {
+    setFormState(prev => ({
+      ...prev,
+      totalLeads: value
+    }));
+  };
+
   const handleSendTestData = () => {
     setTestDataText("Sent!");
     setTimeout(() => {
@@ -661,17 +668,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         {/* Leads Per Day Slider */}
         <div className="space-y-2">
   <LeadsPerDaySlider
-    value={formState.leadsPerDay}
-    onChange={handleLeadsPerDayChange}
-    onTotalLeadsChange={(value) => {
-      console.log('Updating total leads to:', value);
-      setFormState(prev => ({
-        ...prev,
-        totalLeads: value
-      }));
-    }}
-    totalLeads={formState.totalLeads}
-  />
+  value={formState.leadsPerDay}
+  onChange={handleLeadsPerDayChange}
+  onTotalLeadsChange={handleTotalLeadsChange}
+  totalLeads={formState.totalLeads}
+/>
 </div>
 
         {/* Google Sheet URL Section */}
