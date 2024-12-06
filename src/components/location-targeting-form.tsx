@@ -299,7 +299,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    const response = await fetch('https://hook.us1.make.com/3uabqujycih6f37fji2t41bvfs67zl61', {
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
