@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useState, useMemo, lazy, Suspense } from "react"
+import { useState, useMemo, lazy, Suspense, useRef  } from "react"
 import { 
   Map, 
   Building2, 
@@ -120,6 +120,25 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [testDataText, setTestDataText] = useState("Send test data");
+
+const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const height = entry.contentRect.height;
+        window.parent.postMessage({ type: 'heightUpdate', height }, '*');
+      }
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   // Tutorial images and descriptions
   const tutorialImages = [
@@ -457,8 +476,8 @@ if (data && data.redirectUrl) {
 
   // Render form
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+  <div ref={containerRef}>
+    <form onSubmit={handleSubmit}>
         <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {/* First Name */}
