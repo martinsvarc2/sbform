@@ -324,24 +324,19 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Send initial request
-    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // Send single request and wait for response
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       body: formData
     });
 
-    // Wait for Make.com to process (3 seconds)
+    const data = await response.json();
+    console.log('Response:', data);
+
+    // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Now get the response with the redirect URL
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
-      method: 'GET'
-    });
-
-    const data = await response.json();
-    console.log('Response:', data);  // For debugging
-
-    // Check for the redirect URL in the custom headers
+    // Check for redirect URL in the single response
     if (data?.headersArray) {
       const locationHeader = data.headersArray.find(
         (header: any) => 
