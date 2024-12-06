@@ -398,7 +398,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               value={formState.phoneNumber}
               onChange={handleInputChange}
               className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
-              placeholder="(555) 123-4567"
+              placeholder="555-123-4567"
               maxLength={12}
             />
           </div>
