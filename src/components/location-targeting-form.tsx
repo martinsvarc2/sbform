@@ -307,7 +307,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Create FormData and append fields individually to get proper structure
     const formData = new FormData();
     
-    // Add each field individually to get the * fieldName \n value structure
+    // Add each field individually
     formData.append('* firstName', formState.firstName);
     formData.append('* lastName', formState.lastName);
     formData.append('* email', formState.email);
@@ -324,31 +324,38 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Initial request with no-cors
-    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // Initial request
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       body: formData,
       mode: 'no-cors',
       redirect: 'follow'
     });
 
-    // Wait for Make.com to process (3 seconds)
+    // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Second request to get redirect URL
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
-      method: 'GET',
-      mode: 'no-cors',
-      redirect: 'follow'
+    // Get response with headers
+    const responseWithHeaders = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+      method: 'GET'
     });
 
-    // Check for Value in custom headers and redirect
-    const redirectUrl = response.headers.get('Value');
-    if (redirectUrl) {
-      window.location.href = redirectUrl;
-    } else {
-      throw new Error('No redirect URL found in response headers');
+    const data = await responseWithHeaders.json();
+    console.log('Response data:', data);
+
+    // Find the redirect URL in the custom headers structure
+    if (data && data.Custom && data.Custom.headers) {
+      const headers = data.Custom.headers;
+      if (headers['1'] && headers['1'].Collection) {
+        const collection = headers['1'].Collection;
+        if (collection.Key === 'Location' && collection.Value) {
+          window.location.href = collection.Value;
+          return;
+        }
+      }
     }
+
+    throw new Error('Redirect URL not found in response');
 
   } catch (error) {
     console.error('Submission error:', error);
