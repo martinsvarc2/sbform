@@ -321,37 +321,30 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Send the data
-    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // Single request to Make.com
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       body: formData,
-      redirect: 'manual'
+      redirect: 'follow'
     });
 
     // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 10000));
 
-    // Now check for the redirect
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
-      method: 'GET',
-      redirect: 'manual'
-    });
-
-    if (response.status === 302) {
-      const redirectUrl = response.headers.get('Location');
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
-        return;
-      }
+    // Get the response headers and extract the Location URL
+    const locationUrl = response.headers.get('Location');
+    if (locationUrl && locationUrl.startsWith('https://buy.stripe.com/')) {
+      window.location.href = locationUrl;
+    } else {
+      throw new Error('No redirect URL found');
     }
-
-    throw new Error('No redirect URL found');
 
   } catch (error) {
     console.error('Submission error:', error);
     alert('Failed to process order. Please try again or contact support.');
   }
 };
+
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
 
