@@ -304,39 +304,39 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(submissionData),
-      redirect: 'follow' // Add this to handle redirects
+      body: JSON.stringify(submissionData)
     });
 
-    if (response.status === 302) {
-      const redirectUrl = response.headers.get('Location');
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
-        return;
-      }
+    // Check if the response has a Location header
+    const location = response.headers.get('Location');
+    
+    if (location) {
+      // Redirect to the URL
+      window.location.href = location;
+      return;
     }
 
-    if (!response.ok) {
+    // If no location header but response is ok
+    if (response.ok) {
+      alert('Order submitted successfully!');
+      setFormState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        campaignName: '',
+        targetingType: null,
+        selectedStates: [],
+        selectedCities: [],
+        zipCodes: [],
+        leadsPerDay: 10,
+        googleSheetUrl: '',
+        webhookUrl: '',
+        totalLeads: 0
+      });
+    } else {
       throw new Error('Failed to submit form');
     }
-    
-    // Only reset form and show success if we didn't redirect
-    alert('Order submitted successfully!');
-    setFormState({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      campaignName: '',
-      targetingType: null,
-      selectedStates: [],
-      selectedCities: [],
-      zipCodes: [],
-      leadsPerDay: 10,
-      googleSheetUrl: '',
-      webhookUrl: '',
-      totalLeads: 0
-    });
 
   } catch (error) {
     console.error('Submission error:', error);
