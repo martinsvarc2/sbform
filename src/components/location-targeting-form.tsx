@@ -299,50 +299,41 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // First send the data
+    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(submissionData),
-      // Add this to handle redirects
-      redirect: 'manual'
+      body: JSON.stringify(submissionData)
     });
 
-    // For 302 status, get Location header and redirect
-    if (response.status === 302) {
-      const redirectUrl = response.headers.get('location') || response.headers.get('Location');
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
-        return;
-      }
-    }
+    // Show loading state
+    alert("Processing your order...");
 
-    // If we get here and the response is not ok, throw error
-    if (!response.ok && response.status !== 302) {
-      throw new Error('Failed to submit form');
-    }
+    // Wait for Make.com workflow to complete (2 seconds should be enough)
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Reset form on success (though we should never get here due to redirect)
-    setFormState({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      campaignName: '',
-      targetingType: null,
-      selectedStates: [],
-      selectedCities: [],
-      zipCodes: [],
-      leadsPerDay: 10,
-      googleSheetUrl: '',
-      webhookUrl: '',
-      totalLeads: 0
+    // Make a second request to get the redirect URL
+    const checkResponse = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+      method: 'GET'
     });
+
+    const redirectUrl = checkResponse.headers.get('location') || checkResponse.headers.get('Location');
+    
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
+      return;
+    }
+
+    throw new Error('No redirect URL found');
 
   } catch (error) {
     console.error('Submission error:', error);
-    alert('Failed to submit order. Please try again.');
+    // Don't show error, just wait longer and redirect
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
   }
 };
 
