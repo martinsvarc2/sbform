@@ -413,6 +413,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   
   try {
+    setIsSubmitting(true); // Start loading
+
     const date = new Date();
     const formattedDate = date.toLocaleDateString('en-US', {
       month: 'long',
@@ -451,7 +453,17 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const data = await response.json();
     
     if (data?.redirectUrl) {
-      window.open(data.redirectUrl, '_blank');
+      try {
+        // Try to redirect in same window first
+        window.location.href = data.redirectUrl;
+      } catch (redirectError) {
+        console.error('Same page redirect failed:', redirectError);
+        // Fall back to new tab if same page redirect fails
+        const newWindow = window.open(data.redirectUrl, '_blank');
+        if (!newWindow) {
+          alert('Please allow pop-ups for this site to complete your order.');
+        }
+      }
       return;
     }
 
@@ -461,7 +473,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     console.error('Submission error:', error);
     alert('Failed to process order. Please try again or contact support.');
   } finally {
-    setIsSubmitting(false);
+    setIsSubmitting(false); // Stop loading regardless of outcome
   }
 };
 
