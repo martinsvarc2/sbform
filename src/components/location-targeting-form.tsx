@@ -293,7 +293,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   
   try {
-    // Format the date
     const date = new Date();
     const formattedDate = date.toLocaleDateString('en-US', {
       month: 'long',
@@ -304,10 +303,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       hour12: true
     });
 
-    // Create FormData and append fields individually
     const formData = new FormData();
     
-    // Add each field individually
     formData.append('* firstName', formState.firstName);
     formData.append('* lastName', formState.lastName);
     formData.append('* email', formState.email);
@@ -324,41 +321,37 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Send single request and wait for response
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // Send the data
+    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
-      body: formData
+      body: formData,
+      redirect: 'manual'
     });
 
-    const data = await response.json();
-    console.log('Response:', data);
-
     // Wait for Make.com to process
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
 
-    // Check for redirect URL in the single response
-    if (data?.headersArray) {
-      const locationHeader = data.headersArray.find(
-        (header: any) => 
-          header['1 Collection']?.Key === 'Location' && 
-          header['1 Collection']?.Value
-      );
+    // Now check for the redirect
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+      method: 'GET',
+      redirect: 'manual'
+    });
 
-      if (locationHeader) {
-        const redirectUrl = locationHeader['1 Collection'].Value;
+    if (response.status === 302) {
+      const redirectUrl = response.headers.get('Location');
+      if (redirectUrl) {
         window.location.href = redirectUrl;
         return;
       }
     }
 
-    throw new Error('Redirect URL not found in response');
+    throw new Error('No redirect URL found');
 
   } catch (error) {
     console.error('Submission error:', error);
     alert('Failed to process order. Please try again or contact support.');
   }
 };
-
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
 
