@@ -13,6 +13,7 @@ export interface FormState {
   leadsPerDay: number;
   googleSheetUrl: string;
   webhookUrl: string;
+  totalLeads: number;
 }
 
 export interface LocationFormProps {
