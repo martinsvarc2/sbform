@@ -299,10 +299,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    // Show processing message
-    alert("Processing your order...");
-
-    // Wait for Make.com to process and get Stripe URL
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
@@ -311,15 +307,12 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: JSON.stringify(submissionData)
     });
 
-    const responseText = await response.text();
+    const redirectUrl = response.headers.get('Location');
     
-    if (responseText.includes('stripe.com')) {
-      window.location.href = responseText.trim();
+    if (redirectUrl) {
+      window.location.assign(redirectUrl);
       return;
     }
-
-    // If we get here, something went wrong
-    throw new Error('No Stripe URL received');
 
   } catch (error) {
     console.error('Submission error:', error);
