@@ -299,46 +299,36 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    // Show some loading state to the user (you might want to add a loading state to your component)
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // First send the data
+    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(submissionData)
+      body: JSON.stringify(submissionData),
+      mode: 'no-cors',
+      redirect: 'follow'
     });
 
-    // Parse the response
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
+    // Now make a second request to get the redirect URL
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+      method: 'GET',
+      mode: 'no-cors',
+      redirect: 'follow'
+    });
+
     const data = await response.json();
-    
-    // Check if we have the headersArray in the response
-    if (data && data.headersArray) {
-      // Find the Location header
-      const locationHeader = data.headersArray.find((header: any) => 
-        header.Collection && 
-        header.Collection.Key === 'Location' && 
-        header.Collection.Value
-      );
+    console.log('Response data:', data);
 
-      if (locationHeader) {
-        // Get the redirect URL
-        const redirectUrl = locationHeader.Collection.Value;
-        
-        // Validate the URL before redirecting
-        if (redirectUrl.startsWith('https://buy.stripe.com/')) {
-          window.location.href = redirectUrl;
-          return;
-        }
-      }
+    if (data && data.redirectUrl) {
+      window.location.href = data.redirectUrl;
     }
-
-    // If we reach here, something went wrong with the redirect URL
-    throw new Error('Invalid or missing redirect URL in response');
 
   } catch (error) {
     console.error('Submission error:', error);
-    // Show a more detailed error message
-    alert('Failed to process order. Please ensure all fields are filled correctly and try again. If the problem persists, please contact support.');
+    alert('Failed to process order. Please try again or contact support.');
   }
 };
 
