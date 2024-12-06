@@ -26,21 +26,18 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   }, [value])
 
   const handleTotalLeadsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/^0+/, '')
-    if (inputValue === '' || inputValue === '0') {
-      onTotalLeadsChange(0)
-      return
-    }
-    const numValue = parseInt(inputValue)
-    if (!isNaN(numValue) && numValue >= 0) {
-      onTotalLeadsChange(numValue)
-      if (numValue > 3000) {
-        setTimeout(() => {
-          onTotalLeadsChange(3000)
-        }, 1000)
-      }
-    }
+  const inputValue = e.target.value.replace(/^0+/, '')
+  
+  if (inputValue === '' || inputValue === '0') {
+    onTotalLeadsChange(0)
+    return
   }
+  
+  const numValue = parseInt(inputValue)
+  if (!isNaN(numValue) && numValue >= 0) {
+    onTotalLeadsChange(numValue)
+  }
+}
 
   const handleLeadsPerDayChange = (newValue: number[]) => {
     setLeadsPerDay(newValue[0])
