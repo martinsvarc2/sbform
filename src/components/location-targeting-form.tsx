@@ -293,54 +293,50 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   
   try {
-   const submissionData = {
-  ...formState,
-  submissionDate: new Date().toISOString(),
-  totalLeads: formState.totalLeads, // Explicitly include totalLeads
-  totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`, // Calculate total amount ($5 per lead)
-  targetingDetails: formState.targetingType === 'national' 
-    ? { type: 'national' }
-    : formState.targetingType === 'state'
-    ? { 
-        type: 'state',
-        states: formState.selectedStates,
-        cities: formState.selectedCities 
-      }
-    : { 
-        type: 'zipCode',
-        zipCodes: formState.zipCodes.filter(zip => zip.length === 5)
-      }
-};
+    const submissionData = {
+      ...formState,
+      submissionDate: new Date().toISOString(),
+      totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
+    };
 
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    const response = await fetch('https://hook.us1.make.com/3uabqujycih6f37fji2t41bvfs67zl61', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(submissionData)
+      body: JSON.stringify(submissionData),
+      redirect: 'follow' // Add this to handle redirects
     });
+
+    if (response.status === 302) {
+      const redirectUrl = response.headers.get('Location');
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      }
+    }
 
     if (!response.ok) {
       throw new Error('Failed to submit form');
     }
-
-    alert('Order submitted successfully!');
     
+    // Only reset form and show success if we didn't redirect
+    alert('Order submitted successfully!');
     setFormState({
-  firstName: '',
-  lastName: '',
-  email: '',
-  phoneNumber: '',
-  campaignName: '',
-  targetingType: null,
-  selectedStates: [],
-  selectedCities: [],
-  zipCodes: [],
-  leadsPerDay: 10,
-  googleSheetUrl: '',
-  webhookUrl: '',
-  totalLeads: 0 
-});
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      campaignName: '',
+      targetingType: null,
+      selectedStates: [],
+      selectedCities: [],
+      zipCodes: [],
+      leadsPerDay: 10,
+      googleSheetUrl: '',
+      webhookUrl: '',
+      totalLeads: 0
+    });
 
   } catch (error) {
     console.error('Submission error:', error);
