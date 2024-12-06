@@ -475,52 +475,54 @@ return (
               </Select>
             </div>
 
-            {/* City Selection Section - Using Dynamic Components */}
-            {formState.selectedStates.length === 1 && (
-              <div className="space-y-4">
-                <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
-                  Select By Cities
-                </Label>
-                <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
-                  * You can select up to 10 cities only when a single state is selected.
-                </p>
+           {/* City Selection Section - Using Dynamic Components */}
+{formState.selectedStates.length === 1 && (
+  <div className="space-y-4">
+    <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+      Select By Cities
+    </Label>
+    <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
+      * You can select up to 10 cities only when a single state is selected.
+    </p>
 
-                {/* Selected Cities Pills */}
-                {formState.selectedCities.length > 0 && (
-                  <div className="mb-2 sm:mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {formState.selectedCities.map((city) => (
-                        <button
-                          key={city}
-                          type="button"
-                          onClick={() => handleRemoveCity(city)}
-                          className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
-                        >
-                          {city}
-                          <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+    {/* Selected Cities Pills */}
+    {formState.selectedCities.length > 0 && (
+      <div className="mb-2 sm:mb-4">
+        <div className="flex flex-wrap gap-2">
+          {formState.selectedCities.map((city) => (
+            <button
+              key={city}
+              type="button"
+              onClick={() => handleRemoveCity(city)}
+              className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+            >
+              {city}
+              <X className="h-3 w-3 sm:h-4 sm:w-4" />
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
 
-                {/* Dynamic City Selector Component */}
-                <Suspense fallback={
-                  <div className="h-[200px] flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
-                  </div>
-                }>
-                  {STATE_COMPONENTS[formState.selectedStates[0]] && (
-                    <STATE_COMPONENTS[formState.selectedStates[0]] 
-                      onCitySelect={handleStateCitySelect}
-                      selectedCities={formState.selectedCities}
-                    />
-                  )}
-                </Suspense>
-              </div>
-            )}
-          </div>
-        )}
+    {/* Dynamic City Selector Component */}
+    <Suspense fallback={
+      <div className="h-[200px] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
+      </div>
+    }>
+      {formState.selectedStates[0] && 
+        STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS] && (
+          React.createElement(
+            STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS], 
+            {
+              onCitySelect: handleStateCitySelect,
+              selectedCities: formState.selectedCities
+            }
+          )
+      )}
+    </Suspense>
+  </div>
+)}
 
         {/* ZIP Code Input Section */}
         {formState.targetingType === 'zipCode' && (
