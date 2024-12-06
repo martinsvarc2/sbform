@@ -34,6 +34,10 @@ import LeadsPerDaySlider from './leads-per-day-slider'
 import Image from "next/image"
 import { FormState, LocationFormProps, CitySelector } from "@/types/form"
 
+interface CitySelector {
+  onCitySelect: (city: { name: string }) => void;
+  selectedCities: string[];
+}
 
 const STATE_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<CitySelector>>> = {
   'Alabama': lazy(() => import('./AlabamaCitySelector')),
