@@ -25,6 +25,6 @@ export default function Page() {
   }
 
   return (
-      <LocationTargetingForm onSubmit={handleSubmit} />
+    <LocationTargetingForm onSubmit={handleSubmit} />
   )
 }
