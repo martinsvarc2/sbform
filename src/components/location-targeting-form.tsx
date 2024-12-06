@@ -333,12 +333,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Parse response
     const data = await response.json();
     
-    // Redirect if URL exists
-    if (data && data.redirectUrl) {
-      window.location.href = data.redirectUrl;
-      return;
-    }
-
+    // Redirect parent window if URL exists
+if (data && data.redirectUrl) {
+  window.parent.location.href = data.redirectUrl;
+  return;
+}
     throw new Error('No redirect URL in response');
 
   } catch (error) {
