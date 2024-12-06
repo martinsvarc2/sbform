@@ -139,9 +139,39 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
 
   // Event handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormState(prev => ({ ...prev, [name]: value }));
-  };
+  const { name, value } = e.target;
+  
+  if (name === 'phoneNumber') {
+    // Remove all non-numeric characters
+    const numbersOnly = value.replace(/\D/g, '');
+    
+    // Format the number into XXX-XXX-XXXX
+    let formattedNumber = '';
+    if (numbersOnly.length > 0) {
+      // Add first 3 digits
+      formattedNumber += numbersOnly.slice(0, 3);
+      if (numbersOnly.length > 3) {
+        // Add hyphen and next 3 digits
+        formattedNumber += '-' + numbersOnly.slice(3, 6);
+        if (numbersOnly.length > 6) {
+          // Add hyphen and last 4 digits
+          formattedNumber += '-' + numbersOnly.slice(6, 10);
+        }
+      }
+    }
+    
+    setFormState(prev => ({ 
+      ...prev, 
+      [name]: formattedNumber
+    }));
+  } else {
+    // Handle all other inputs normally
+    setFormState(prev => ({ 
+      ...prev, 
+      [name]: value 
+    }));
+  }
+};
 
   const handleTargetingChange = (type: 'national' | 'state' | 'zipCode') => {
     setFormState(prev => ({
@@ -369,6 +399,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               onChange={handleInputChange}
               className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
               placeholder="(555) 123-4567"
+              maxLength={12}
             />
           </div>
           <div className="sm:col-span-2">
