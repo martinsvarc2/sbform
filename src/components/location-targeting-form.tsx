@@ -252,7 +252,6 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
 
   const availableStates = useMemo(() => US_STATES, []);
   
-
   return (
     <>
       <form
@@ -721,6 +720,6 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
       </form>
     </>
   );
-};  // Changed this from } to };
+};
 
 export default LocationTargetingForm;
