@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 interface LeadsPerDaySliderProps {
   value: number
   onChange: (value: number) => void
+  onTotalLeadsChange?: (value: number) => void
   textSize?: string
 }
 
@@ -19,21 +20,24 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({ value, onChange }
   }, [value])
 
   const handleTotalLeadsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/^0+/, '')
-    if (inputValue === '' || inputValue === '0') {
-      setTotalLeads(inputValue)
-      return
-    }
-    const numValue = parseInt(inputValue)
-    if (!isNaN(numValue) && numValue >= 0) {
-      setTotalLeads(inputValue)
-      if (numValue > 3000) {
-        setTimeout(() => {
-          setTotalLeads('3000')
-        }, 1000)
-      }
+  const inputValue = e.target.value.replace(/^0+/, '')
+  if (inputValue === '' || inputValue === '0') {
+    setTotalLeads(inputValue)
+    onTotalLeadsChange?.(0)  // Add this
+    return
+  }
+  const numValue = parseInt(inputValue)
+  if (!isNaN(numValue) && numValue >= 0) {
+    setTotalLeads(inputValue)
+    onTotalLeadsChange?.(numValue)  // Add this
+    if (numValue > 3000) {
+      setTimeout(() => {
+        setTotalLeads('3000')
+        onTotalLeadsChange?.(3000)  // Add this
+      }, 1000)
     }
   }
+}
 
   const handleLeadsPerDayChange = (newValue: number[]) => {
     setLeadsPerDay(newValue[0])
