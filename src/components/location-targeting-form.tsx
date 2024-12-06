@@ -299,8 +299,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    // First send the data
-    await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    // Show processing message
+    alert("Processing your order...");
+
+    // Wait for Make.com to process and get Stripe URL
+    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -308,32 +311,19 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: JSON.stringify(submissionData)
     });
 
-    // Show loading state
-    alert("Processing your order...");
-
-    // Wait for Make.com workflow to complete (2 seconds should be enough)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // Make a second request to get the redirect URL
-    const checkResponse = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
-      method: 'GET'
-    });
-
-    const redirectUrl = checkResponse.headers.get('location') || checkResponse.headers.get('Location');
+    const responseText = await response.text();
     
-    if (redirectUrl) {
-      window.location.href = redirectUrl;
+    if (responseText.includes('stripe.com')) {
+      window.location.href = responseText.trim();
       return;
     }
 
-    throw new Error('No redirect URL found');
+    // If we get here, something went wrong
+    throw new Error('No Stripe URL received');
 
   } catch (error) {
     console.error('Submission error:', error);
-    // Don't show error, just wait longer and redirect
-    setTimeout(() => {
-      window.location.reload();
-    }, 3000);
+    alert('Failed to submit order. Please try again.');
   }
 };
 
