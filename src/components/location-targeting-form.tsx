@@ -404,99 +404,28 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
           </div>
         </div>
 
-        {/* State and City Selection Section */}
-        {formState.targetingType === 'state' && (
-          <div className="space-y-4 sm:space-y-6">
-            <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
-              <span className="text-[#EECC6E]">* </span>Select By States
-            </Label>
-            <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
-              * You can select up to 5 states maximum
-            </p>
-            
-            {/* Selected States Pills */}
-            {formState.selectedStates.length > 0 && (
-              <div className="mb-2 sm:mb-4">
-                <div className="flex flex-wrap gap-2">
-                  {formState.selectedStates.map((state) => (
-                    <button
-                      key={state}
-                      type="button"
-                      onClick={() => handleRemoveState(state)}
-                      className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
-                    >
-                      {state}
-                      <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* State Selection Dropdown */}
-            <div className="relative">
-              <Select onValueChange={handleStateChange}>
-                <SelectTrigger 
-                  className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
-                >
-                  <div className="flex justify-between items-center w-full font-manrope">
-                    <SelectValue placeholder="Select State(s)" />
-                    <span className="text-[#EECC6E]/70 font-manrope text-xs sm:text-sm">
-                      {formState.selectedStates.length}/5
-                    </span>
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20 font-manrope">
-                  <ScrollArea className="h-[200px] sm:h-[300px]">
-                    {availableStates.map((state) => (
-                      <SelectItem 
-                        key={state} 
-                        value={state} 
-                        className={cn(
-                          "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
-                          formState.selectedStates.includes(state) 
-                            ? "bg-[#EECC6E] text-black" 
-                            : "hover:bg-[#EECC6E]/10",
-                          formState.selectedStates.length >= 5 && !formState.selectedStates.includes(state)
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        )}
-                        disabled={formState.selectedStates.length >= 5 && !formState.selectedStates.includes(state)}
-                      >
-                        <div className="flex items-center justify-between w-full font-manrope">
-                          <span>{state}</span>
-                          {formState.selectedStates.includes(state) && (
-                            <Check className="h-4 w-4" />
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
-                </SelectContent>
-              </Select>
-            </div>
-
-           {formState.selectedStates.length === 1 && (
-  <div className="space-y-4">
+{/* State and City Selection Section */}
+{formState.targetingType === 'state' && (
+  <div className="space-y-4 sm:space-y-6">
     <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
-      Select By Cities
+      <span className="text-[#EECC6E]">* </span>Select By States
     </Label>
     <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
-      * You can select up to 10 cities only when a single state is selected.
+      * You can select up to 5 states maximum
     </p>
-
-    {/* Selected Cities Pills */}
-    {formState.selectedCities.length > 0 && (
+    
+    {/* Selected States Pills */}
+    {formState.selectedStates.length > 0 && (
       <div className="mb-2 sm:mb-4">
         <div className="flex flex-wrap gap-2">
-          {formState.selectedCities.map((city) => (
+          {formState.selectedStates.map((state) => (
             <button
-              key={city}
+              key={state}
               type="button"
-              onClick={() => handleRemoveCity(city)}
+              onClick={() => handleRemoveState(state)}
               className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
             >
-              {city}
+              {state}
               <X className="h-3 w-3 sm:h-4 sm:w-4" />
             </button>
           ))}
@@ -504,23 +433,97 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
       </div>
     )}
 
-    {/* Dynamic City Selector Component */}
-    {formState.selectedStates[0] && (
-      <Suspense fallback={
-        <div className="h-[200px] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
-        </div>
-      }>
-        {formState.selectedStates[0] in STATE_COMPONENTS && 
-          React.createElement(
-            STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS],
-            {
-              onCitySelect: handleStateCitySelect,
-              selectedCities: formState.selectedCities
+    {/* State Selection Dropdown */}
+    <div className="relative">
+      <Select onValueChange={handleStateChange}>
+        <SelectTrigger 
+          className="w-full bg-[#1F1F1F] border-[#EECC6E]/20 text-white h-10 sm:h-12 px-3 sm:px-4 hover:bg-[#2A2A2A] transition-all duration-200 focus:ring-2 focus:ring-[#EECC6E]/50 focus:ring-offset-0 rounded-xl font-manrope"
+        >
+          <div className="flex justify-between items-center w-full font-manrope">
+            <SelectValue placeholder="Select State(s)" />
+            <span className="text-[#EECC6E]/70 font-manrope text-xs sm:text-sm">
+              {formState.selectedStates.length}/5
+            </span>
+          </div>
+        </SelectTrigger>
+        <SelectContent className="bg-[#1F1F1F] border-[#EECC6E]/20 font-manrope">
+          <ScrollArea className="h-[200px] sm:h-[300px]">
+            {availableStates.map((state) => (
+              <SelectItem 
+                key={state} 
+                value={state} 
+                className={cn(
+                  "text-white transition-colors duration-200 rounded-lg mx-1 font-manrope",
+                  formState.selectedStates.includes(state) 
+                    ? "bg-[#EECC6E] text-black" 
+                    : "hover:bg-[#EECC6E]/10",
+                  formState.selectedStates.length >= 5 && !formState.selectedStates.includes(state)
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                )}
+                disabled={formState.selectedStates.length >= 5 && !formState.selectedStates.includes(state)}
+              >
+                <div className="flex items-center justify-between w-full font-manrope">
+                  <span>{state}</span>
+                  {formState.selectedStates.includes(state) && (
+                    <Check className="h-4 w-4" />
+                  )}
+                </div>
+              </SelectItem>
+            ))}
+          </ScrollArea>
+        </SelectContent>
+      </Select>
+    </div>
+
+    {/* City Selection Section */}
+    {formState.selectedStates.length === 1 && (
+      <div className="space-y-4">
+        <Label className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3">
+          Select By Cities
+        </Label>
+        <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-4 font-manrope">
+          * You can select up to 10 cities only when a single state is selected.
+        </p>
+
+        {/* Selected Cities Pills */}
+        {formState.selectedCities.length > 0 && (
+          <div className="mb-2 sm:mb-4">
+            <div className="flex flex-wrap gap-2">
+              {formState.selectedCities.map((city) => (
+                <button
+                  key={city}
+                  type="button"
+                  onClick={() => handleRemoveCity(city)}
+                  className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-manrope font-medium flex items-center gap-1 sm:gap-2 transition-all duration-200"
+                >
+                  {city}
+                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Dynamic City Selector */}
+        {formState.selectedStates[0] && (
+          <Suspense fallback={
+            <div className="h-[200px] flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EECC6E]" />
+            </div>
+          }>
+            {STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS] && 
+              React.createElement(
+                STATE_COMPONENTS[formState.selectedStates[0] as keyof typeof STATE_COMPONENTS],
+                {
+                  onCitySelect: handleStateCitySelect,
+                  selectedCities: formState.selectedCities
+                }
+              )
             }
-          )
-        }
-      </Suspense>
+          </Suspense>
+        )}
+      </div>
     )}
   </div>
 )}
