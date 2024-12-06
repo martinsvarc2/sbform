@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useState, useMemo, lazy, Suspense } from "react"
+import * as React from "react"
+import { useState, useMemo, lazy, Suspense } from "react"
 import { 
   Map, 
   Building2, 
@@ -251,13 +252,11 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   };
 
   // Memoized states
-  const availableStates = useMemo(() => {
-    return US_STATES;
-  }, []);
+  const availableStates = useMemo(() => US_STATES, []);
 
   // Render form
   return (
-    <React.Fragment>
+    <div>
       <form
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
@@ -722,7 +721,7 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
           </Button>
         </Card>
       </form>
-    </>
+    </div>
   );
 };
 
