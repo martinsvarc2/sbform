@@ -343,8 +343,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     });
 
     // Check for Value in custom headers and redirect
-    if (response.headers && response.headers.get('Value')) {
-      window.location.href = response.headers.get('Value');
+    const redirectUrl = response.headers.get('Value');
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
+    } else {
+      throw new Error('No redirect URL found in response headers');
     }
 
   } catch (error) {
