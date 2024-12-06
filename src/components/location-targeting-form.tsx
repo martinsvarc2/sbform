@@ -255,12 +255,13 @@ const LocationTargetingForm = ({ onSubmit }: LocationFormProps): JSX.Element => 
   const availableStates = useMemo(() => US_STATES, []);
 
 return (
-  <form
-    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      onSubmit(formState);
-    }}
-  >
+    <>
+      <form
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
+          onSubmit(formState);
+        }}
+      >
       <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
         {/* Personal Information Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -691,6 +692,7 @@ return (
         </Button>
       </Card>
     </form>
+    </>
   );
 };
 
