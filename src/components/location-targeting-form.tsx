@@ -362,8 +362,16 @@ const validateForm = (): { isValid: boolean; message: string } => {
     return { isValid: false, message: 'Campaign Name is required' };
   }
   if (!formState.targetingType) {
-    return { isValid: false, message: 'Please select a targeting type' };
-  }
+  return { isValid: false, message: 'Please select a targeting type' };
+}
+// Additional validation based on targeting type
+if (formState.targetingType === 'state' && formState.selectedStates.length === 0) {
+  return { isValid: false, message: 'Please select at least one state' };
+}
+
+if (formState.targetingType === 'zipCode' && (formState.zipCodes.length === 0 || !formState.zipCodes.some(zip => zip.trim()))) {
+  return { isValid: false, message: 'Please enter at least one ZIP code' };
+}
   if (formState.leadsPerDay <= 0) {
     return { isValid: false, message: 'Please specify leads per day' };
   }
