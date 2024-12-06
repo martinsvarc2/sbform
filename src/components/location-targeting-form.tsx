@@ -414,7 +414,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   
   try {
     setIsSubmitting(true); // Start loading
-
+    
     const date = new Date();
     const formattedDate = date.toLocaleDateString('en-US', {
       month: 'long',
@@ -448,22 +448,20 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: formData
     });
 
+    // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     const data = await response.json();
     
     if (data?.redirectUrl) {
-      try {
-        // Try to redirect in same window first
-        window.location.href = data.redirectUrl;
-      } catch (redirectError) {
-        console.error('Same page redirect failed:', redirectError);
-        // Fall back to new tab if same page redirect fails
-        const newWindow = window.open(data.redirectUrl, '_blank');
-        if (!newWindow) {
-          alert('Please allow pop-ups for this site to complete your order.');
-        }
+      // Get the top-most parent window
+      let targetWindow = window;
+      while (targetWindow !== targetWindow.parent) {
+        targetWindow = targetWindow.parent;
       }
+      
+      // Redirect the entire page to Stripe
+      targetWindow.location.href = data.redirectUrl;
       return;
     }
 
