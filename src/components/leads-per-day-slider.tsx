@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils"
 interface LeadsPerDaySliderProps {
   value: number
   onChange: (value: number) => void
-  onTotalLeadsChange?: (value: number) => void
+  onTotalLeadsChange: (value: number) => void
+  totalLeads: number  // Add this prop
   textSize?: string
 }
 
@@ -15,9 +16,9 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   value, 
   onChange,
   onTotalLeadsChange,
+  totalLeads: parentTotalLeads, // Rename to avoid confusion
   textSize 
 }) => {
-  const [totalLeads, setTotalLeads] = React.useState<string>('0')
   const [leadsPerDay, setLeadsPerDay] = React.useState(value)
 
   React.useEffect(() => {
@@ -27,18 +28,15 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   const handleTotalLeadsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.replace(/^0+/, '')
     if (inputValue === '' || inputValue === '0') {
-      setTotalLeads(inputValue)
-      onTotalLeadsChange?.(0)
+      onTotalLeadsChange(0)
       return
     }
     const numValue = parseInt(inputValue)
     if (!isNaN(numValue) && numValue >= 0) {
-      setTotalLeads(inputValue)
-      onTotalLeadsChange?.(numValue)
+      onTotalLeadsChange(numValue)
       if (numValue > 3000) {
         setTimeout(() => {
-          setTotalLeads('3000')
-          onTotalLeadsChange?.(3000)
+          onTotalLeadsChange(3000)
         }, 1000)
       }
     }
@@ -53,8 +51,6 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     return Math.ceil(total / perDay)
   }
 
-  const numericTotalLeads = parseInt(totalLeads) || 0
-
   return (
     <div className="space-y-12">
       <div className="space-y-8">
@@ -64,12 +60,12 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
         <Input
           type="text"
           inputMode="numeric"
-          value={totalLeads}
+          value={parentTotalLeads === 0 ? '' : parentTotalLeads.toString()}
           onChange={handleTotalLeadsChange}
           className="h-14 bg-black/50 border-[#EECC6E]/20 text-white text-xl font-manrope text-center"
         />
         <div className="text-[#EECC6E] text-lg sm:text-xl font-semibold text-center font-manrope mt-4">
-          {numericTotalLeads} {numericTotalLeads === 1 ? 'lead' : 'leads'} = ${numericTotalLeads * 5}
+          {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${parentTotalLeads * 5}
         </div>
       </div>
       <div className="space-y-8">
@@ -79,14 +75,14 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
         <SliderPrimitive.Root
           className={cn(
             "relative flex w-full touch-none select-none items-center h-14 py-4",
-            (totalLeads === '0' || totalLeads === '') && "opacity-50 pointer-events-none"
+            parentTotalLeads === 0 && "opacity-50 pointer-events-none"
           )}
           value={[leadsPerDay]}
           onValueChange={handleLeadsPerDayChange}
           max={100}
           min={1}
           step={1}
-          disabled={totalLeads === '0' || totalLeads === ''}
+          disabled={parentTotalLeads === 0}
         >
           <SliderPrimitive.Track className="relative h-4 w-full grow overflow-hidden rounded-full bg-[#1F1F1F]">
             <SliderPrimitive.Range className="absolute h-full bg-[#EECC6E]" />
@@ -97,9 +93,9 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
         </SliderPrimitive.Root>
         <div className={cn(
           "text-[#EECC6E] text-lg sm:text-xl font-semibold text-center font-manrope mt-4",
-          (totalLeads === '0' || totalLeads === '') && "opacity-50"
+          parentTotalLeads === 0 && "opacity-50"
         )}>
-          {leadsPerDay} {leadsPerDay === 1 ? 'lead' : 'leads'} per day = {calculateDays(numericTotalLeads, leadsPerDay)} days
+          {leadsPerDay} {leadsPerDay === 1 ? 'lead' : 'leads'} per day = {calculateDays(parentTotalLeads, leadsPerDay)} days
         </div>
       </div>
     </div>
