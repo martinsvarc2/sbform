@@ -722,3 +722,5 @@ return (
     </>
   );
 }
+
+export default LocationTargetingForm;
