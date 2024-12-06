@@ -293,13 +293,36 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   
   try {
+    // Format the date in a more readable way
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+
+    // Structure the data in the desired format
     const submissionData = {
-      ...formState,
-      submissionDate: new Date().toISOString(),
+      firstName: formState.firstName,
+      lastName: formState.lastName,
+      email: formState.email,
+      phoneNumber: formState.phoneNumber,
+      campaignName: formState.campaignName,
+      targetingType: formState.targetingType,
+      selectedStatesArray: formState.selectedStates,
+      selectedCitiesArray: formState.selectedCities,
+      zipCodesArray: formState.zipCodes,
+      leadsPerDay: formState.leadsPerDay,
+      totalLeads: formState.totalLeads,
+      googleSheetUrl: formState.googleSheetUrl,
+      webhookUrl: formState.webhookUrl,
+      submissionDate: formattedDate,
       totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`
     };
 
-    // First send the data
     await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       headers: {
@@ -310,7 +333,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       redirect: 'follow'
     });
 
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    // Wait for 3 seconds to give Make.com time to process
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Now make a second request to get the redirect URL
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
