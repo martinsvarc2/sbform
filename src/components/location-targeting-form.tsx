@@ -250,8 +250,8 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     }, 5000);
   };
 
-  // Memoized values
   const availableStates = useMemo(() => US_STATES, []);
+  
 
   return (
     <>
