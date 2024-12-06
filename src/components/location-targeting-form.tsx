@@ -661,16 +661,16 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         {/* Leads Per Day Slider */}
         <div className="space-y-2">
   <LeadsPerDaySlider
-    value={formState.leadsPerDay}
-    onChange={handleLeadsPerDayChange}
-    onTotalLeadsChange={(value) => {
-      setFormState(prev => ({
-        ...prev,
-        totalLeads: value
-      }))
-    }}
-  />
-</div>
+  value={formState.leadsPerDay}
+  onChange={handleLeadsPerDayChange}
+  onTotalLeadsChange={(value) => {
+    setFormState(prev => ({
+      ...prev,
+      totalLeads: value
+    }))
+  }}
+  totalLeads={formState.totalLeads}
+/>
 
         {/* Google Sheet URL Section */}
         <div className="space-y-2">
