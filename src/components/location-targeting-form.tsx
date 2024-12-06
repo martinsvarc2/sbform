@@ -100,7 +100,7 @@ const US_STATES = [
   "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ];
 
-export default function LocationTargetingForm({ onSubmit }: LocationFormProps) {
+const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   const [formState, setFormState] = useState<FormState>({
     firstName: '',
     lastName: '',
@@ -262,21 +262,21 @@ return (
         }}
       >
         <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
-        {/* Personal Information Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          <div>
-            <Label htmlFor="firstName" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
-              <span className="text-[#EECC6E]">* </span>First Name
-            </Label>
-            <Input
-              id="firstName"
-              name="firstName"
-              value={formState.firstName}
-              onChange={handleInputChange}
-              className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
-              placeholder="John"
-            />
-          </div>
+            {/* First Name */}
+            <div>
+              <Label htmlFor="firstName" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
+                <span className="text-[#EECC6E]">* </span>First Name
+              </Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                value={formState.firstName}
+                onChange={handleInputChange}
+                className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+                placeholder="John"
+              />
+            </div>
           <div>
             <Label htmlFor="lastName" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-semibold mb-4">
               <span className="text-[#EECC6E]">* </span>Last Name
@@ -721,6 +721,6 @@ return (
       </form>
     </>
   );
-}
+};  // Changed this from } to };
 
 export default LocationTargetingForm;
