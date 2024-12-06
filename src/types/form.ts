@@ -20,6 +20,6 @@ export interface LocationFormProps {
 }
 
 export interface CitySelector {
-  onCitySelect: (city: { name: string }) => void;
+  onCitySelect: (city: { name: string; rank: number }) => void;
   selectedCities: string[];
 }
