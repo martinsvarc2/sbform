@@ -687,11 +687,10 @@ return (
             </path>
             <path d="M5 8L4.5 11.5L8 12L4.5 12.5L5 16L3.5 13L0 13.5L2.5 12L1 8.5L3.5 11.5L5 8Z" fill="white">
               <animateTransform attributeName="transform" type="rotate" from="0 4 12" to="360 4 12" dur="6s" repeatCount="indefinite"/>
-            </path>
-          </svg>
+            </svg>
         </Button>
       </Card>
     </form>
     </>
   );
-};
+}
