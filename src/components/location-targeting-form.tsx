@@ -321,26 +321,25 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    // Single request with manual redirect handling
+    // Send request and wait for response
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
-      body: formData,
-      redirect: 'manual' // Let us handle the redirect
+      body: formData
     });
 
     // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Check for 302 redirect status
-    if (response.status === 302) {
-      const redirectUrl = response.headers.get('Location');
-      if (redirectUrl && redirectUrl.startsWith('https://buy.stripe.com/')) {
-        window.location.href = redirectUrl;
-        return;
-      }
+    // Parse response
+    const data = await response.json();
+    
+    // Redirect if URL exists
+    if (data && data.redirectUrl) {
+      window.location.href = data.redirectUrl;
+      return;
     }
 
-    throw new Error('No redirect URL found');
+    throw new Error('No redirect URL in response');
 
   } catch (error) {
     console.error('Submission error:', error);
