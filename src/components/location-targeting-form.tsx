@@ -454,17 +454,21 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     
     if (data?.redirectUrl) {
       try {
-        // Try to redirect the whole site first
-        window.top.location.href = data.redirectUrl;
+        // Check if window.top exists and is accessible
+        if (window.top && window.top !== null) {
+          window.top.location.href = data.redirectUrl;
+        } else {
+          throw new Error('Cannot access top window');
+        }
       } catch (e) {
         console.log('Could not redirect main window, trying new tab...');
-        // If that fails, try opening in new tab
+        // Try opening in new tab
         const newWindow = window.open(data.redirectUrl, '_blank');
         
-        // If new tab was blocked, alert the user
+        // If new tab was blocked
         if (!newWindow) {
           alert('Pop-up was blocked. Please allow pop-ups to complete your payment or click OK to try redirecting again.');
-          // One more attempt to redirect the main page
+          // Final attempt to redirect the current window
           window.location.href = data.redirectUrl;
         }
       }
@@ -480,7 +484,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(false);
   }
 };
-
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
 
