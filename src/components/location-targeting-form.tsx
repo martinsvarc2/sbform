@@ -670,54 +670,56 @@ return (
           />
         </div>
 
-        {/* Submit Button - Fixed version */}
+        {/* Submit Button */}
           <Button 
-  type="submit" 
-  className="relative w-full h-14 overflow-hidden text-black font-manrope font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
->
-  <div className="absolute inset-0 bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] animate-flow-colors" />
-  <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-50" />
-  <span className="relative z-10">Order Now</span>
-  <svg 
-    className="magic-sparkle" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M14 5L13.5 8.5L17 9L13.5 9.5L14 13L12.5 10L9 10.5L11.5 9L10 5.5L12.5 8.5L14 5Z" fill="white">
-      <animateTransform 
-        attributeName="transform" 
-        type="rotate" 
-        from="0 12 12" 
-        to="360 12 12" 
-        dur="5s" 
-        repeatCount="indefinite"
-      />
-    </path>
-    <path d="M19 12L18.5 15.5L22 16L18.5 16.5L19 20L17.5 17L14 17.5L16.5 16L15 12.5L17.5 15.5L19 12Z" fill="white">
-      <animateTransform 
-        attributeName="transform" 
-        type="rotate" 
-        from="0 18 16" 
-        to="-360 18 16" 
-        dur="7s" 
-        repeatCount="indefinite"
-      />
-    </path>
-    <path d="M5 8L4.5 11.5L8 12L4.5 12.5L5 16L3.5 13L0 13.5L2.5 12L1 8.5L3.5 11.5L5 8Z" fill="white">
-      <animateTransform 
-        attributeName="transform" 
-        type="rotate" 
-        from="0 4 12" 
-        to="360 4 12" 
-        dur="6s" 
-        repeatCount="indefinite"
-      />
-    </path>
-  </svg>
-</Button>
+            type="submit" 
+            className="relative w-full h-14 overflow-hidden text-black font-manrope font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] animate-flow-colors" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-50" />
+            <span className="relative z-10">Order Now</span>
+            <svg 
+              className="magic-sparkle" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M14 5L13.5 8.5L17 9L13.5 9.5L14 13L12.5 10L9 10.5L11.5 9L10 5.5L12.5 8.5L14 5Z" fill="white">
+                <animateTransform 
+                  attributeName="transform" 
+                  type="rotate" 
+                  from="0 12 12" 
+                  to="360 12 12" 
+                  dur="5s" 
+                  repeatCount="indefinite"
+                />
+              </path>
+              <path d="M19 12L18.5 15.5L22 16L18.5 16.5L19 20L17.5 17L14 17.5L16.5 16L15 12.5L17.5 15.5L19 12Z" fill="white">
+                <animateTransform 
+                  attributeName="transform" 
+                  type="rotate" 
+                  from="0 18 16" 
+                  to="-360 18 16" 
+                  dur="7s" 
+                  repeatCount="indefinite"
+                />
+              </path>
+              <path d="M5 8L4.5 11.5L8 12L4.5 12.5L5 16L3.5 13L0 13.5L2.5 12L1 8.5L3.5 11.5L5 8Z" fill="white">
+                <animateTransform 
+                  attributeName="transform" 
+                  type="rotate" 
+                  from="0 4 12" 
+                  to="360 4 12" 
+                  dur="6s" 
+                  repeatCount="indefinite"
+                />
+              </path>
+            </svg>
+          </Button>
         </Card>
       </form>
     </>
   );
 }
+
+export default LocationTargetingForm;
