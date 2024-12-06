@@ -113,9 +113,9 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   selectedCities: [],
   zipCodes: [],
   leadsPerDay: 10,
+  totalLeads: 0,  // Initialize with 0
   googleSheetUrl: '',
-  webhookUrl: '',
-  totalLeads: 500 // Default to match your UI
+  webhookUrl: ''
 });
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -660,11 +660,17 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         {/* Leads Per Day Slider */}
         <div className="space-y-2">
-          <LeadsPerDaySlider
-            value={formState.leadsPerDay}
-            onChange={handleLeadsPerDayChange}
-          />
-        </div>
+  <LeadsPerDaySlider
+    value={formState.leadsPerDay}
+    onChange={handleLeadsPerDayChange}
+    onTotalLeadsChange={(value) => {
+      setFormState(prev => ({
+        ...prev,
+        totalLeads: value
+      }))
+    }}
+  />
+</div>
 
         {/* Google Sheet URL Section */}
         <div className="space-y-2">
