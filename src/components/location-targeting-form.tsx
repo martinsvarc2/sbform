@@ -671,6 +671,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   }}
   totalLeads={formState.totalLeads}
 />
+</div>
 
         {/* Google Sheet URL Section */}
         <div className="space-y-2">
