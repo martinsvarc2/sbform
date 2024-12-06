@@ -304,17 +304,41 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(submissionData)
+      body: JSON.stringify(submissionData),
+      // Add this to handle redirects
+      redirect: 'manual'
     });
 
-    const redirectUrl = response.headers.get('location') || response.headers.get('Location');
-    
-    if (redirectUrl) {
-      window.location.href = redirectUrl;
-      return;
+    // For 302 status, get Location header and redirect
+    if (response.status === 302) {
+      const redirectUrl = response.headers.get('location') || response.headers.get('Location');
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      }
     }
 
-    throw new Error('No redirect URL found');
+    // If we get here and the response is not ok, throw error
+    if (!response.ok && response.status !== 302) {
+      throw new Error('Failed to submit form');
+    }
+
+    // Reset form on success (though we should never get here due to redirect)
+    setFormState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      campaignName: '',
+      targetingType: null,
+      selectedStates: [],
+      selectedCities: [],
+      zipCodes: [],
+      leadsPerDay: 10,
+      googleSheetUrl: '',
+      webhookUrl: '',
+      totalLeads: 0
+    });
 
   } catch (error) {
     console.error('Submission error:', error);
