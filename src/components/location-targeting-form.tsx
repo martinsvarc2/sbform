@@ -32,7 +32,8 @@ import {
 import { cn } from "@/lib/utils"
 import LeadsPerDaySlider from './leads-per-day-slider'
 import Image from "next/image"
-import { FormState, LocationFormProps } from "@/types/form"
+import { FormState, LocationFormProps, CitySelector } from "@/types/form"
+
 
 // Import all state city selectors
 const STATE_COMPONENTS = {
