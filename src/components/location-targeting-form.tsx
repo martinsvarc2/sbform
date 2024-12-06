@@ -251,18 +251,69 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
     }, 5000);
   };
 
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  
+  try {
+    const submissionData = {
+      ...formState,
+      submissionDate: new Date().toISOString(),
+      targetingDetails: formState.targetingType === 'national' 
+        ? { type: 'national' }
+        : formState.targetingType === 'state'
+        ? { 
+            type: 'state',
+            states: formState.selectedStates,
+            cities: formState.selectedCities 
+          }
+        : { 
+            type: 'zipCode',
+            zipCodes: formState.zipCodes.filter(zip => zip.length === 5)
+          }
+    };
+
+    const response = await fetch('https://hook.us1.make.com/3uabqujycih6f37fji2t41bvfs67zl61', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(submissionData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit form');
+    }
+
+    alert('Order submitted successfully!');
+    
+    setFormState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      campaignName: '',
+      targetingType: null,
+      selectedStates: [],
+      selectedCities: [],
+      zipCodes: [],
+      leadsPerDay: 10,
+      googleSheetUrl: '',
+      webhookUrl: ''
+    });
+
+  } catch (error) {
+    console.error('Submission error:', error);
+    alert('Failed to submit order. Please try again.');
+  }
+};
+
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
 
   // Render form
   return (
     <div>
-      <form
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          onSubmit(formState);
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <Card className="w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-black/50 border-[#EECC6E]/20 shadow-2xl backdrop-blur-sm font-manrope">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {/* First Name */}
