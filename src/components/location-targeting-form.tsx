@@ -312,7 +312,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       }
 };
 
-    const response = await fetch('https://hook.us1.make.com/3uabqujycih6f37fji2t41bvfs67zl61', {
+    const response = await fetch('https://hook.us1.make.com/wmfga8go6646np2mgme35pbvp9b277m7', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
