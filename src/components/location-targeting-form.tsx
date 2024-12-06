@@ -101,7 +101,7 @@ const US_STATES = [
   "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ];
 
-const LocationTargetingForm = ({ onSubmit }: LocationFormProps): JSX.Element => {
+export default function LocationTargetingForm({ onSubmit }: LocationFormProps) {
   const [formState, setFormState] = useState<FormState>({
     firstName: '',
     lastName: '',
@@ -695,5 +695,3 @@ return (
     </>
   );
 };
-
-export default LocationTargetingForm;
