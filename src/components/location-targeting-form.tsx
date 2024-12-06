@@ -307,17 +307,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: JSON.stringify(submissionData)
     });
 
-    // Get the response text
-    const responseText = await response.text();
+    const redirectUrl = response.headers.get('location') || response.headers.get('Location');
     
-    // If it's a valid Stripe URL, redirect
-    if (responseText.includes('stripe.com')) {
-      window.location.href = responseText.trim();
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
       return;
     }
 
-    // If we get here, something went wrong
-    throw new Error('Invalid response');
+    throw new Error('No redirect URL found');
 
   } catch (error) {
     console.error('Submission error:', error);
