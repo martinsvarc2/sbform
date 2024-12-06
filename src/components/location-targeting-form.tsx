@@ -304,26 +304,27 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       hour12: true
     });
 
-    // Create FormData object
+    // Create FormData and append fields individually to get proper structure
     const formData = new FormData();
     
-    // Add each field individually
-    formData.append('firstName', formState.firstName);
-    formData.append('lastName', formState.lastName);
-    formData.append('email', formState.email);
-    formData.append('phoneNumber', formState.phoneNumber);
-    formData.append('campaignName', formState.campaignName);
-    formData.append('targetingType', formState.targetingType || '');
-    formData.append('selectedStatesArray', JSON.stringify(formState.selectedStates));
-    formData.append('selectedCitiesArray', JSON.stringify(formState.selectedCities));
-    formData.append('zipCodesArray', JSON.stringify(formState.zipCodes));
-    formData.append('leadsPerDay', formState.leadsPerDay.toString());
-    formData.append('totalLeads', formState.totalLeads.toString());
-    formData.append('googleSheetUrl', formState.googleSheetUrl);
-    formData.append('webhookUrl', formState.webhookUrl);
-    formData.append('submissionDate', formattedDate);
-    formData.append('totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
+    // Add each field individually to get the * fieldName \n value structure
+    formData.append('* firstName', formState.firstName);
+    formData.append('* lastName', formState.lastName);
+    formData.append('* email', formState.email);
+    formData.append('* phoneNumber', formState.phoneNumber);
+    formData.append('* campaignName', formState.campaignName);
+    formData.append('* targetingType', formState.targetingType || '');
+    formData.append('* selectedStatesArray', JSON.stringify(formState.selectedStates));
+    formData.append('* selectedCitiesArray', JSON.stringify(formState.selectedCities));
+    formData.append('* zipCodesArray', JSON.stringify(formState.zipCodes));
+    formData.append('* leadsPerDay', formState.leadsPerDay.toString());
+    formData.append('* totalLeads', formState.totalLeads.toString());
+    formData.append('* googleSheetUrl', formState.googleSheetUrl);
+    formData.append('* webhookUrl', formState.webhookUrl);
+    formData.append('* submissionDate', formattedDate);
+    formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
+    // Initial request with no-cors
     await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'POST',
       body: formData,
@@ -331,21 +332,19 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       redirect: 'follow'
     });
 
-    // Wait for Make.com to process
+    // Wait for Make.com to process (3 seconds)
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Get redirect URL
+    // Second request to get redirect URL
     const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
       method: 'GET',
       mode: 'no-cors',
       redirect: 'follow'
     });
 
-    const data = await response.json();
-    console.log('Response data:', data);
-
-    if (data && data.redirectUrl) {
-      window.location.href = data.redirectUrl;
+    // Check for Value in custom headers and redirect
+    if (response.headers && response.headers.get('Value')) {
+      window.location.href = response.headers.get('Value');
     }
 
   } catch (error) {
