@@ -103,19 +103,20 @@ const US_STATES = [
 
 const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   const [formState, setFormState] = useState<FormState>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    campaignName: '',
-    targetingType: null,
-    selectedStates: [],
-    selectedCities: [],
-    zipCodes: [],
-    leadsPerDay: 10,
-    googleSheetUrl: '',
-    webhookUrl: ''
-  });
+  firstName: '',
+  lastName: '',
+  email: '',
+  phoneNumber: '',
+  campaignName: '',
+  targetingType: null,
+  selectedStates: [],
+  selectedCities: [],
+  zipCodes: [],
+  leadsPerDay: 10,
+  googleSheetUrl: '',
+  webhookUrl: '',
+  totalLeads: 500 // Default to match your UI
+});
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [testDataText, setTestDataText] = useState("Send test data");
@@ -285,22 +286,24 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   
   try {
-    const submissionData = {
-      ...formState,
-      submissionDate: new Date().toISOString(),
-      targetingDetails: formState.targetingType === 'national' 
-        ? { type: 'national' }
-        : formState.targetingType === 'state'
-        ? { 
-            type: 'state',
-            states: formState.selectedStates,
-            cities: formState.selectedCities 
-          }
-        : { 
-            type: 'zipCode',
-            zipCodes: formState.zipCodes.filter(zip => zip.length === 5)
-          }
-    };
+   const submissionData = {
+  ...formState,
+  submissionDate: new Date().toISOString(),
+  totalLeads: formState.totalLeads, // Explicitly include totalLeads
+  totalAmount: `$${(formState.totalLeads * 5).toLocaleString()}`, // Calculate total amount ($5 per lead)
+  targetingDetails: formState.targetingType === 'national' 
+    ? { type: 'national' }
+    : formState.targetingType === 'state'
+    ? { 
+        type: 'state',
+        states: formState.selectedStates,
+        cities: formState.selectedCities 
+      }
+    : { 
+        type: 'zipCode',
+        zipCodes: formState.zipCodes.filter(zip => zip.length === 5)
+      }
+};
 
     const response = await fetch('https://hook.us1.make.com/3uabqujycih6f37fji2t41bvfs67zl61', {
       method: 'POST',
@@ -328,7 +331,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       zipCodes: [],
       leadsPerDay: 10,
       googleSheetUrl: '',
-      webhookUrl: ''
+      webhookUrl: '',
+      totalLeads: 500
     });
 
   } catch (error) {
