@@ -35,8 +35,7 @@ import Image from "next/image"
 import { FormState, LocationFormProps, CitySelector } from "@/types/form"
 
 
-// Import all state city selectors
-const STATE_COMPONENTS = {
+const STATE_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<CitySelector>>> = {
   'Alabama': lazy(() => import('./AlabamaCitySelector')),
   'Alaska': lazy(() => import('./AlaskaCitySelector')),
   'Arizona': lazy(() => import('./ArizonaCitySelector')),
