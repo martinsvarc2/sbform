@@ -443,35 +443,76 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.append('* submissionDate', formattedDate);
     formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
-    const response = await fetch('https://hook.us1.make.com/uoo5iewklc2lvrjpfwbkui7bktgv4gy9', {
+    const response = await fetch('https://hook.us1.make.com/plhly3vl93eon3j7nybcepqx9k0hz7py', {
       method: 'POST',
       body: formData
     });
 
+    // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     const data = await response.json();
     
     if (data?.redirectUrl) {
-      try {
-        // Check if window.top exists and is accessible
-        if (window.top && window.top !== null) {
-          window.top.location.href = data.redirectUrl;
-        } else {
-          throw new Error('Cannot access top window');
+      const handleRedirect = (url: string) => {
+        // Validate if it's a proper Stripe URL with query parameters
+        if (!url.startsWith('https://buy.stripe.com/')) {
+          throw new Error('Invalid redirect URL');
         }
-      } catch (e) {
-        console.log('Could not redirect main window, trying new tab...');
-        // Try opening in new tab
-        const newWindow = window.open(data.redirectUrl, '_blank');
-        
-        // If new tab was blocked
-        if (!newWindow) {
-          alert('Pop-up was blocked. Please allow pop-ups to complete your payment or click OK to try redirecting again.');
-          // Final attempt to redirect the current window
-          window.location.href = data.redirectUrl;
+
+        // Try different redirect methods
+        const redirectMethods = [
+          // Method 1: Try to redirect the top window
+          () => {
+            if (window !== window.top) {
+              // We're in an iframe, try to redirect the parent
+              window.parent.location.href = url;
+            }
+          },
+          // Method 2: Try to redirect using top
+          () => {
+            if (window.top) {
+              window.top.location.href = url;
+            }
+          },
+          // Method 3: Try to open in new tab
+          () => {
+            const newWindow = window.open(url, '_blank');
+            if (!newWindow) {
+              throw new Error('Popup blocked');
+            }
+          },
+          // Method 4: Final fallback - try to redirect current window
+          () => {
+            window.location.href = url;
+          }
+        ];
+
+        // Try each method until one works
+        for (const method of redirectMethods) {
+          try {
+            method();
+            return true; // If we get here, the redirect worked
+          } catch (e) {
+            console.log('Redirect method failed, trying next method...');
+            continue;
+          }
         }
+
+        return false; // If we get here, all methods failed
+      };
+
+      const redirectSuccess = handleRedirect(data.redirectUrl);
+      
+      if (!redirectSuccess) {
+        // If all automatic redirects failed, ask user to click manually
+        alert(
+          'We were unable to redirect you automatically. Please click OK to open the payment page in a new tab. ' +
+          'If nothing happens, please check your popup blocker settings.'
+        );
+        window.open(data.redirectUrl, '_blank');
       }
+
       return;
     }
 
@@ -484,6 +525,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(false);
   }
 };
+
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
 
