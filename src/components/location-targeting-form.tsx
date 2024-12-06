@@ -413,7 +413,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   
   try {
-    setIsSubmitting(true); // Start loading
+    setIsSubmitting(true);
     
     const date = new Date();
     const formattedDate = date.toLocaleDateString('en-US', {
@@ -448,28 +448,26 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       body: formData
     });
 
-    // Wait for Make.com to process
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     const data = await response.json();
     
     if (data?.redirectUrl) {
-      // Get the top-most parent window in a type-safe way
-      const getTopWindow = (): Window => {
-        let currentWindow = window as Window;
-        try {
-          while (currentWindow.parent !== currentWindow && currentWindow.parent.location.href) {
-            currentWindow = currentWindow.parent;
-          }
-        } catch (e) {
-          // If we hit a cross-origin frame, return the highest accessible window
-          console.log('Reached highest accessible window');
+      try {
+        // Try to redirect the whole site first
+        window.top.location.href = data.redirectUrl;
+      } catch (e) {
+        console.log('Could not redirect main window, trying new tab...');
+        // If that fails, try opening in new tab
+        const newWindow = window.open(data.redirectUrl, '_blank');
+        
+        // If new tab was blocked, alert the user
+        if (!newWindow) {
+          alert('Pop-up was blocked. Please allow pop-ups to complete your payment or click OK to try redirecting again.');
+          // One more attempt to redirect the main page
+          window.location.href = data.redirectUrl;
         }
-        return currentWindow;
-      };
-
-      // Redirect the entire page to Stripe
-      getTopWindow().location.href = data.redirectUrl;
+      }
       return;
     }
 
@@ -479,7 +477,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     console.error('Submission error:', error);
     alert('Failed to process order. Please try again or contact support.');
   } finally {
-    setIsSubmitting(false); // Stop loading regardless of outcome
+    setIsSubmitting(false);
   }
 };
 
