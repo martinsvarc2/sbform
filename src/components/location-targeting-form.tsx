@@ -127,6 +127,9 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRedirectDialog, setShowRedirectDialog] = useState(false);
   const [redirectUrl, setRedirectUrl] = useState('');
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
 const containerRef = useRef<HTMLDivElement>(null);
 
@@ -432,113 +435,44 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     });
 
     const formData = new FormData();
-    
-    formData.append('* firstName', formState.firstName);
-    formData.append('* lastName', formState.lastName);
-    formData.append('* email', formState.email);
-    formData.append('* phoneNumber', formState.phoneNumber);
-    formData.append('* campaignName', formState.campaignName);
-    formData.append('* targetingType', formState.targetingType || '');
-    formData.append('* selectedStatesArray', JSON.stringify(formState.selectedStates));
-    formData.append('* selectedCitiesArray', JSON.stringify(formState.selectedCities));
-    formData.append('* zipCodesArray', JSON.stringify(formState.zipCodes));
-    formData.append('* leadsPerDay', formState.leadsPerDay.toString());
-    formData.append('* totalLeads', formState.totalLeads.toString());
-    formData.append('* googleSheetUrl', formState.googleSheetUrl);
-    formData.append('* webhookUrl', formState.webhookUrl);
-    formData.append('* submissionDate', formattedDate);
-    formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
+    // ... your existing formData append code ...
 
     const response = await fetch('https://hook.us1.make.com/plhly3vl93eon3j7nybcepqx9k0hz7py', {
       method: 'POST',
       body: formData
     });
 
-    // Wait for Make.com to process
+    // Keep the 5 second delay for Make.com
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     const data = await response.json();
     
-const [showRedirectDialog, setShowRedirectDialog] = useState(false);
-const [redirectUrl, setRedirectUrl] = useState('');
-
-// Inside handleSubmit function, replace the handleRedirect logic with this:
-if (data?.redirectUrl) {
-  const handleRedirect = (url: string) => {
-    // Validate if it's a proper Stripe URL with query parameters
-    if (!url.startsWith('https://buy.stripe.com/')) {
-      throw new Error('Invalid redirect URL');
-    }
-
-    // Try different redirect methods
-    const redirectMethods = [
-      // Method 1: Try to redirect the top window
-      () => {
-        if (window !== window.top) {
-          window.parent.location.href = url;
-          return true;
-        }
-        return false;
-      },
-      // Method 2: Try to redirect using top
-      () => {
-        if (window.top) {
-          window.top.location.href = url;
-          return true;
-        }
-        return false;
+    if (data?.redirectUrl) {
+      // Validate Stripe URL
+      if (!data.redirectUrl.startsWith('https://buy.stripe.com/')) {
+        throw new Error('Invalid redirect URL');
       }
-    ];
 
-    // Try each method
-    for (const method of redirectMethods) {
-      try {
-        const success = method();
-        if (success) return true;
-      } catch (e) {
-        console.log('Redirect method failed, trying next method...');
-        continue;
-      }
-    }
-
-    // If all automatic redirects failed, show the dialog
-    setRedirectUrl(url);
-    setShowRedirectDialog(true);
-    return false;
-  };
-
-  const redirectSuccess = handleRedirect(data.redirectUrl);
-  if (redirectSuccess) {
-    return;
-  }
-
-  // No need for alert here as we'll show the dialog
-  return;
-}
-
-      const redirectSuccess = handleRedirect(data.redirectUrl);
+      // Try to open in new tab first
+      const newWindow = window.open(data.redirectUrl, '_blank');
       
-      if (!redirectSuccess) {
-        // If all automatic redirects failed, ask user to click manually
-        alert(
-          'We were unable to redirect you automatically. Please click OK to open the payment page in a new tab. ' +
-          'If nothing happens, please check your popup blocker settings.'
-        );
-        window.open(data.redirectUrl, '_blank');
+      // If popup is blocked, newWindow will be null
+      if (!newWindow) {
+        setRedirectUrl(data.redirectUrl);
+        setShowRedirectDialog(true);
       }
-
       return;
     }
 
     throw new Error('No redirect URL in response');
 
-  } catch (error) {
-    console.error('Submission error:', error);
-    alert('Failed to process order. Please try again or contact support.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+ catch (error) {
+  console.error('Submission error:', error);
+  setErrorMessage(error instanceof Error ? error.message : 'Failed to process order. Please try again or contact support.');
+  setShowErrorDialog(true);
+} finally {
+  setIsSubmitting(false);
+}
 
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
@@ -1084,6 +1018,28 @@ if (data?.redirectUrl) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+<Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+  <DialogContent className="bg-black/95 border-[#EECC6E]/20">
+    <DialogHeader>
+      <DialogTitle className="text-[#EECC6E] text-xl font-manrope">Error Processing Order</DialogTitle>
+      <DialogDescription className="text-white/80 font-manrope">
+        {errorMessage || 'An error occurred while processing your order. Please try again or contact support.'}
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter className="mt-4">
+      <Button
+        onClick={() => {
+          setShowErrorDialog(false);
+          setErrorMessage('');
+        }}
+        className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity"
+      >
+        Close
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
     
   </div>
 );
