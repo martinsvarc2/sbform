@@ -929,25 +929,29 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         {/* Webhook URL Section */}
         <div className="space-y-2">
-          <Label htmlFor="webhookUrl" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3 flex items-center gap-2">
-            Webhook URL
-            <button
-              onClick={handleSendTestData}
-              className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors"
-            >
-              {testDataText}
-            </button>
-          </Label>
-          <Input
-            id="webhookUrl"
-            name="webhookUrl"
-            type="url"
-            value={formState.webhookUrl}
-            onChange={handleInputChange}
-            className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
-            placeholder="https://example.com/webhook"
-          />
-        </div>
+  <Label htmlFor="webhookUrl" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3 flex items-center gap-2">
+    Webhook URL
+    <button
+      type="button" // Add this to prevent form submission
+      onClick={(e) => {
+        e.preventDefault(); // Add this to prevent form submission
+        handleSendTestData();
+      }}
+      className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors"
+    >
+      {testDataText}
+    </button>
+  </Label>
+  <Input
+    id="webhookUrl"
+    name="webhookUrl"
+    type="url"
+    value={formState.webhookUrl}
+    onChange={handleInputChange}
+    className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+    placeholder="https://example.com/webhook"
+  />
+</div>
 
         {/* Submit Button */}
 <Button 
