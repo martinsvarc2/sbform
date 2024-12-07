@@ -435,7 +435,22 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     });
 
     const formData = new FormData();
-    // ... your existing formData append code ...
+    
+    formData.append('* firstName', formState.firstName);
+    formData.append('* lastName', formState.lastName);
+    formData.append('* email', formState.email);
+    formData.append('* phoneNumber', formState.phoneNumber);
+    formData.append('* campaignName', formState.campaignName);
+    formData.append('* targetingType', formState.targetingType || '');
+    formData.append('* selectedStatesArray', JSON.stringify(formState.selectedStates));
+    formData.append('* selectedCitiesArray', JSON.stringify(formState.selectedCities));
+    formData.append('* zipCodesArray', JSON.stringify(formState.zipCodes));
+    formData.append('* leadsPerDay', formState.leadsPerDay.toString());
+    formData.append('* totalLeads', formState.totalLeads.toString());
+    formData.append('* googleSheetUrl', formState.googleSheetUrl);
+    formData.append('* webhookUrl', formState.webhookUrl);
+    formData.append('* submissionDate', formattedDate);
+    formData.append('* totalAmount', `$${(formState.totalLeads * 5).toLocaleString()}`);
 
     const response = await fetch('https://hook.us1.make.com/plhly3vl93eon3j7nybcepqx9k0hz7py', {
       method: 'POST',
@@ -466,13 +481,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     throw new Error('No redirect URL in response');
 
- catch (error) {
-  console.error('Submission error:', error);
-  setErrorMessage(error instanceof Error ? error.message : 'Failed to process order. Please try again or contact support.');
-  setShowErrorDialog(true);
-} finally {
-  setIsSubmitting(false);
-}
+  } catch (error) {
+    console.error('Submission error:', error);
+    setErrorMessage(error instanceof Error ? error.message : 'Failed to process order. Please try again or contact support.');
+    setShowErrorDialog(true);
+  } finally {
+    setIsSubmitting(false);
+  }
+}; // Add this closing brace
 
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
