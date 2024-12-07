@@ -29,6 +29,10 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import LeadsPerDaySlider from './leads-per-day-slider'
@@ -121,6 +125,8 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [testDataText, setTestDataText] = useState("Send test data");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showRedirectDialog, setShowRedirectDialog] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState('');
 
 const containerRef = useRef<HTMLDivElement>(null);
 
@@ -453,54 +459,62 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     const data = await response.json();
     
-    if (data?.redirectUrl) {
-      const handleRedirect = (url: string) => {
-        // Validate if it's a proper Stripe URL with query parameters
-        if (!url.startsWith('https://buy.stripe.com/')) {
-          throw new Error('Invalid redirect URL');
+const [showRedirectDialog, setShowRedirectDialog] = useState(false);
+const [redirectUrl, setRedirectUrl] = useState('');
+
+// Inside handleSubmit function, replace the handleRedirect logic with this:
+if (data?.redirectUrl) {
+  const handleRedirect = (url: string) => {
+    // Validate if it's a proper Stripe URL with query parameters
+    if (!url.startsWith('https://buy.stripe.com/')) {
+      throw new Error('Invalid redirect URL');
+    }
+
+    // Try different redirect methods
+    const redirectMethods = [
+      // Method 1: Try to redirect the top window
+      () => {
+        if (window !== window.top) {
+          window.parent.location.href = url;
+          return true;
         }
-
-        // Try different redirect methods
-        const redirectMethods = [
-          // Method 1: Try to redirect the top window
-          () => {
-            if (window !== window.top) {
-              // We're in an iframe, try to redirect the parent
-              window.parent.location.href = url;
-            }
-          },
-          // Method 2: Try to redirect using top
-          () => {
-            if (window.top) {
-              window.top.location.href = url;
-            }
-          },
-          // Method 3: Try to open in new tab
-          () => {
-            const newWindow = window.open(url, '_blank');
-            if (!newWindow) {
-              throw new Error('Popup blocked');
-            }
-          },
-          // Method 4: Final fallback - try to redirect current window
-          () => {
-            window.location.href = url;
-          }
-        ];
-
-        // Try each method until one works
-        for (const method of redirectMethods) {
-          try {
-            method();
-            return true; // If we get here, the redirect worked
-          } catch (e) {
-            console.log('Redirect method failed, trying next method...');
-            continue;
-          }
+        return false;
+      },
+      // Method 2: Try to redirect using top
+      () => {
+        if (window.top) {
+          window.top.location.href = url;
+          return true;
         }
+        return false;
+      }
+    ];
 
-        return false; // If we get here, all methods failed
-      };
+    // Try each method
+    for (const method of redirectMethods) {
+      try {
+        const success = method();
+        if (success) return true;
+      } catch (e) {
+        console.log('Redirect method failed, trying next method...');
+        continue;
+      }
+    }
+
+    // If all automatic redirects failed, show the dialog
+    setRedirectUrl(url);
+    setShowRedirectDialog(true);
+    return false;
+  };
+
+  const redirectSuccess = handleRedirect(data.redirectUrl);
+  if (redirectSuccess) {
+    return;
+  }
+
+  // No need for alert here as we'll show the dialog
+  return;
+}
 
       const redirectSuccess = handleRedirect(data.redirectUrl);
       
@@ -1047,6 +1061,29 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         </div>
       </div>
     )}
+
+{/* Custom Redirect Dialog */}
+    <Dialog open={showRedirectDialog} onOpenChange={setShowRedirectDialog}>
+      <DialogContent className="bg-black/95 border-[#EECC6E]/20">
+        <DialogHeader>
+          <DialogTitle className="text-[#EECC6E] text-xl font-manrope">Complete Your Purchase</DialogTitle>
+          <DialogDescription className="text-white/80 font-manrope">
+            Click the button below to proceed to the secure payment page.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="mt-4">
+          <Button
+            onClick={() => {
+              window.open(redirectUrl, '_blank');
+              setShowRedirectDialog(false);
+            }}
+            className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity"
+          >
+            Go to Stripe
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     
   </div>
 );
