@@ -129,6 +129,8 @@ const LocationTargetingForm: React.FC<LocationFormProps> = ({ onSubmit }) => {
   const [redirectUrl, setRedirectUrl] = useState('');
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [waitlistPhone, setWaitlistPhone] = useState('');
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
 
 const containerRef = useRef<HTMLDivElement>(null);
@@ -311,6 +313,22 @@ const handleTotalLeadsChange = (value: number) => {
     }));
   };
 
+const handleWaitlistSubmit = async (phone: string) => {
+  try {
+    const formData = new FormData();
+    formData.append('phone', phone);
+    formData.append('joinedAt', new Date().toISOString());
+    await fetch('https://hook.us1.make.com/veenqj0ftzf2aomin9wgdrfa9ctp12lw', {
+      method: 'POST',
+      body: formData
+    });
+    setShowErrorDialog(false);
+    setShowSuccessDialog(true);
+  } catch (error) {
+    console.error('Waitlist error:', error);
+  }
+};
+
 const handleSendTestData = async () => {
     // Check if webhook URL exists
     if (!formState.webhookUrl) {
@@ -483,12 +501,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
   } catch (error) {
     console.error('Submission error:', error);
-    setErrorMessage(error instanceof Error ? error.message : 'Failed to process order. Please try again or contact support.');
+    // Instead of showing a generic error message, we'll show our capacity message
     setShowErrorDialog(true);
+    // Reset any previous waitlist phone
+    setWaitlistPhone('');
   } finally {
     setIsSubmitting(false);
   }
-}; // Add this closing brace
+};
 
   // Memoized states
   const availableStates = useMemo(() => US_STATES, []);
@@ -1035,20 +1055,54 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       </DialogContent>
     </Dialog>
 
+{/* Enhanced Error Dialog with Waitlist */}
 <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
   <DialogContent className="bg-black/95 border-[#EECC6E]/20">
     <DialogHeader>
-      <DialogTitle className="text-[#EECC6E] text-xl font-manrope">Error Processing Order</DialogTitle>
+      <DialogTitle className="text-[#EECC6E] text-xl font-manrope">At Maximum Capacity</DialogTitle>
+      <DialogDescription className="text-white/80 font-manrope space-y-4">
+        <p className="mt-2">We're currently at capacity with our premium clients. Join our priority waitlist to be notified when spots become available.</p>
+        <div className="space-y-2">
+          <Label 
+            htmlFor="waitlistPhone" 
+            className="text-[#EECC6E] text-sm"
+          >
+            Your Phone Number
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              id="waitlistPhone"
+              type="tel"
+              value={waitlistPhone}
+              onChange={(e) => setWaitlistPhone(e.target.value)}
+              placeholder="555-123-4567"
+              className="bg-black/50 border-[#EECC6E]/20 text-white"
+            />
+            <Button
+              onClick={() => handleWaitlistSubmit(waitlistPhone)}
+              className="bg-[#EECC6E] text-black hover:bg-[#EECC6E]/90 font-semibold px-4"
+            >
+              Join Waitlist
+            </Button>
+          </div>
+        </div>
+      </DialogDescription>
+    </DialogHeader>
+  </DialogContent>
+</Dialog>
+
+{/* Success Dialog */}
+<Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+  <DialogContent className="bg-black/95 border-[#EECC6E]/20">
+    <DialogHeader>
+      <DialogTitle className="text-[#EECC6E] text-xl font-manrope">You're on the List!</DialogTitle>
       <DialogDescription className="text-white/80 font-manrope">
-        {errorMessage || 'An error occurred while processing your order. Please try again or contact support.'}
+        <p className="mt-2">Thank you for your interest! We'll contact you as soon as a spot becomes available. You'll be among the first to know.</p>
       </DialogDescription>
     </DialogHeader>
     <DialogFooter className="mt-4">
       <Button
-        onClick={() => {
-          setShowErrorDialog(false);
-          setErrorMessage('');
-        }}
+        onClick={() => setShowSuccessDialog(false)}
         className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity"
       >
         Close
