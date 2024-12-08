@@ -68,6 +68,20 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     return Math.ceil(total / perDay)
   }
 
+  // Calculate price per lead based on volume
+  const getPricePerLead = (totalLeads: number) => {
+    if (totalLeads >= 4000) return 3.4
+    if (totalLeads >= 3000) return 3.9
+    if (totalLeads >= 2000) return 4.3
+    if (totalLeads >= 1000) return 4.7
+    return 5.0 // Default price
+  }
+
+  // Calculate total price with volume discount
+  const calculateTotalPrice = (leads: number) => {
+    return leads * getPricePerLead(leads)
+  }
+
   return (
     <div className="space-y-12">
       <div className="space-y-8">
@@ -83,7 +97,44 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           className="h-14 bg-black/50 border-[#EECC6E]/20 text-white text-xl font-manrope text-center"
         />
         <div className="text-[#EECC6E] text-lg sm:text-xl font-semibold text-center font-manrope mt-4">
-          {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${parentTotalLeads * 5}
+          {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${calculateTotalPrice(parentTotalLeads).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+        </div>
+
+        {/* Volume Pricing Table */}
+        <div className="mt-8 p-4 bg-black/30 rounded-xl border border-[#EECC6E]/20 backdrop-blur-sm">
+          <h4 className="text-center text-[#EECC6E] font-manrope font-semibold mb-4">
+            Volume Pricing
+          </h4>
+          <div className="grid grid-cols-4 gap-px bg-[#EECC6E]/20 rounded-lg overflow-hidden">
+            {[
+              { leads: "1000+", price: "$4.7" },
+              { leads: "2000+", price: "$4.3" },
+              { leads: "3000+", price: "$3.9" },
+              { leads: "4000+", price: "$3.4" }
+            ].map((tier, index) => (
+              <div
+                key={tier.leads}
+                className={cn(
+                  "relative group cursor-pointer transition-all duration-300",
+                  "bg-black/50 hover:bg-[#EECC6E]/10",
+                  parentTotalLeads >= parseInt(tier.leads) && "bg-[#EECC6E]/10"
+                )}
+              >
+                <div className="p-4 text-center space-y-2">
+                  <div className="text-white font-manrope font-medium">
+                    {tier.leads}
+                  </div>
+                  <div className="text-[#EECC6E] font-manrope font-bold">
+                    {tier.price}/lead
+                  </div>
+                </div>
+                {/* Highlight Current Tier */}
+                {parentTotalLeads >= parseInt(tier.leads) && (
+                  <div className="absolute inset-0 border-2 border-[#EECC6E] rounded-lg pointer-events-none" />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
