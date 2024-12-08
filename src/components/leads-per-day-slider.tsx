@@ -41,7 +41,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     setLeadsPerDay(value)
   }, [value])
 
-  // Gift animation cycle
+  // Gift animation cycle - 5 seconds
   React.useEffect(() => {
     const interval = setInterval(() => {
       setShowGift(prev => !prev)
@@ -94,7 +94,12 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   const calculateEffectiveness = (pricePerLead: number) => {
     const basePrice = 5.0
     const improvement = ((basePrice - pricePerLead) / basePrice) * 100
-    return improvement.toFixed(1)
+    const savedPerLead = basePrice - pricePerLead
+    const totalSaved = savedPerLead * parentTotalLeads
+    return {
+      percentage: improvement.toFixed(1),
+      savings: totalSaved.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})
+    }
   }
 
   const calculateTotalPrice = (leads: number) => {
@@ -119,7 +124,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${calculateTotalPrice(parentTotalLeads).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
           {parentTotalLeads >= 1000 && (
             <span className="ml-2 text-green-400 text-sm">
-              (Cost-effectiveness improved by {calculateEffectiveness(getPricePerLead(parentTotalLeads))}%)
+              (Cost-effectiveness improved by {calculateEffectiveness(getPricePerLead(parentTotalLeads)).percentage}% (${calculateEffectiveness(getPricePerLead(parentTotalLeads)).savings}))
             </span>
           )}
         </div>
@@ -169,7 +174,12 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
             {/* Tier 4 with sliding animation */}
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger className="relative overflow-hidden">
+                <TooltipTrigger 
+                  className={cn(
+                    "relative overflow-hidden bg-black/50",
+                    parentTotalLeads >= 4000 ? "bg-[#EECC6E]/10" : "hover:bg-[#EECC6E]/5"
+                  )}
+                >
                   <div className="relative h-full">
                     {/* Tier info */}
                     <div 
@@ -199,13 +209,16 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
                       <div className="relative h-full flex items-center justify-center p-4">
                         <img 
-                          src="https://res.cloudinary.com/dmbzcxhjn/image/upload/383ba6c08dc4cdf635aa5d489f08fc0c-removebg-preview_tkovqq.png"
+                          src="https://res.cloudinary.com/dmbzcxhjn/image/upload/383ba6c08dc4cdf635aa5d489f08fc0c_dd1gbd.jpg"
                           alt="Gift"
                           className="w-16 h-16 object-contain"
                         />
                       </div>
                     </div>
                   </div>
+                  {parentTotalLeads >= 4000 && (
+                    <div className="absolute inset-0 border-2 border-[#EECC6E] rounded-lg pointer-events-none" />
+                  )}
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs bg-black/95 border border-[#EECC6E]/20 p-4">
                   <div className="text-white font-manrope">
@@ -220,7 +233,6 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
         </div>
       </div>
 
-      {/* Rest of component remains the same */}
       <div className="space-y-8">
         <h3 className="text-lg sm:text-xl font-manrope font-bold text-[#EECC6E] tracking-tight">
           <span className="text-[#EECC6E]">* </span>Adjust the amount of leads you receive per day
