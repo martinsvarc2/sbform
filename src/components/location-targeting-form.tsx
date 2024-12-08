@@ -33,6 +33,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import LeadsPerDaySlider from './leads-per-day-slider'
