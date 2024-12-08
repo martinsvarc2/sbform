@@ -925,12 +925,12 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           How-To Guide
         </button>
       </DialogTrigger>
-      <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] sm:w-[600px] max-h-[80vh] bg-black/95 border-[#EECC6E]/20 overflow-y-auto">
+      <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[80vw] md:w-[800px] lg:w-[900px] max-h-[90vh] bg-black/95 border-[#EECC6E]/20 overflow-y-auto">
         <DialogHeader className="sticky top-0 bg-black/95 pb-4">
           <DialogTitle className="text-[#EECC6E] text-xl font-manrope">How to Set Up Your Webhook</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 p-4">
-          <p className="text-white/80 font-manrope">
+        <div className="space-y-6 p-6">
+          <p className="text-white/80 font-manrope text-lg">
             1. Create a{" "}
             <a 
               href="https://www.make.com/en" 
@@ -943,7 +943,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             account (better price and functionalities than Zapier)
           </p>
           
-          <p className="text-white/80 font-manrope">
+          <p className="text-white/80 font-manrope text-lg">
             2. Watch this quick video and set up your webhook.
           </p>
           
@@ -959,7 +959,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           </div>
 
           <DialogClose asChild>
-            <Button className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity">
+            <Button className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity text-lg py-6">
               Close
             </Button>
           </DialogClose>
