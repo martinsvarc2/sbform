@@ -925,8 +925,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           How-To Guide
         </button>
       </DialogTrigger>
-      <DialogContent className="bg-black/95 border-[#EECC6E]/20 absolute top-[100%] left-0 w-[90vw] sm:w-[600px] mt-2 max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] sm:w-[600px] max-h-[80vh] bg-black/95 border-[#EECC6E]/20 overflow-y-auto">
+        <DialogHeader className="sticky top-0 bg-black/95 pb-4">
           <DialogTitle className="text-[#EECC6E] text-xl font-manrope">How to Set Up Your Webhook</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 p-4">
