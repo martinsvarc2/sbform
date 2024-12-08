@@ -947,14 +947,13 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             2. Watch this quick video and set up your webhook.
           </p>
           
-          <div style={{position: 'relative', width: '100%', height: '0px', paddingBottom: '56.250%'}}>
+          <div className="relative w-full" style={{paddingBottom: '56.25%'}}>
             <iframe 
-              allow="fullscreen" 
-              allowFullScreen 
-              height="100%" 
-              src="https://streamable.com/e/e4tz56?" 
-              width="100%" 
-              style={{border: 'none', width: '100%', height: '100%', position: 'absolute', left: '0px', top: '0px', overflow: 'hidden'}}
+              src="https://streamable.com/e/e4tz56?"
+              className="absolute top-0 left-0 w-full h-full"
+              frameBorder="0"
+              allowFullScreen
+              allow="fullscreen"
             />
           </div>
 
@@ -987,7 +986,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     placeholder="https://example.com/webhook"
   />
 </div>
-
         {/* Submit Button */}
 <Button 
   type="submit" 
