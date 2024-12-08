@@ -176,9 +176,10 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
               <Tooltip>
                 <TooltipTrigger 
   className={cn(
-    "relative overflow-hidden bg-black/50 pointer-events-none",
-    parentTotalLeads >= 4000 ? "bg-[#EECC6E]/10" : ""
+    "relative overflow-hidden bg-black/50 cursor-default", // changed from pointer-events-none to cursor-default
+    parentTotalLeads >= 4000 ? "bg-[#EECC6E]/10" : "hover:bg-[#EECC6E]/5"
   )}
+  onClick={(e) => e.preventDefault()} // prevent any click events
 >
                   <div className="relative h-full">
                     {/* Tier info */}
