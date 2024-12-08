@@ -422,9 +422,9 @@ if (formState.targetingType === 'zipCode' && (formState.zipCodes.length === 0 ||
   if (formState.leadsPerDay <= 0) {
     return { isValid: false, message: 'Please specify leads per day' };
   }
-  if (formState.totalLeads <= 0) {
-    return { isValid: false, message: 'Please specify total leads' };
-  }
+  if (formState.totalLeads < 100) {
+  return { isValid: false, message: 'Minimum order is 100 leads' };
+}
   if (!formState.googleSheetUrl.trim()) {
     return { isValid: false, message: 'Google Sheet URL is required' };
   }
