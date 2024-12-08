@@ -600,63 +600,63 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* National Targeting Option */}
             <button
-              type="button"
-              onClick={() => handleTargetingChange('national')}
-              className={cn(
-                "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
-                formState.targetingType === 'national' 
-                  ? "border-[#EECC6E] bg-[#EECC6E]/10" 
-                  : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
-              )}
-            >
-              <Map className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 text-[#EECC6E]" />
-              <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-2 sm:mb-3">
-                National Targeting
-              </h3>
-              <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
-                Target the entire United States
-              </p>
-            </button>
+  type="button"
+  onClick={() => handleTargetingChange('national')}
+  className={cn(
+    "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
+    formState.targetingType === 'national' 
+      ? "border-[#EECC6E] bg-[#EECC6E]/10" 
+      : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
+  )}
+>
+  <Map className="h-16 w-16 sm:h-24 sm:w-24 mb-2 sm:mb-3 text-[#EECC6E]" />
+  <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-1 sm:mb-2">
+    National Targeting
+  </h3>
+  <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
+    Target the entire United States
+  </p>
+</button>
 
             {/* State Targeting Option */}
             <button
-              type="button"
-              onClick={() => handleTargetingChange('state')}
-              className={cn(
-                "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
-                formState.targetingType === 'state' 
-                  ? "border-[#EECC6E] bg-[#EECC6E]/10" 
-                  : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
-              )}
-            >
-              <Building2 className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 text-[#EECC6E]" />
-              <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-2 sm:mb-3">
-                State
-              </h3>
-              <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
-                Target specific states and cities
-              </p>
-            </button>
+  type="button"
+  onClick={() => handleTargetingChange('state')}
+  className={cn(
+    "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
+    formState.targetingType === 'state' 
+      ? "border-[#EECC6E] bg-[#EECC6E]/10" 
+      : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
+  )}
+>
+  <Building2 className="h-16 w-16 sm:h-24 sm:w-24 mb-2 sm:mb-3 text-[#EECC6E]" />
+  <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-1 sm:mb-2">
+    State
+  </h3>
+  <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
+    Target specific states and cities
+  </p>
+</button>
 
             {/* Zip Code Targeting Option */}
             <button
-              type="button"
-              onClick={() => handleTargetingChange('zipCode')}
-              className={cn(
-                "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
-                formState.targetingType === 'zipCode' 
-                  ? "border-[#EECC6E] bg-[#EECC6E]/10" 
-                  : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
-              )}
-            >
-              <MapPin className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 text-[#EECC6E]" />
-              <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-2 sm:mb-3">
-                Zip Code
-              </h3>
-              <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
-                Target specific ZIP codes
-              </p>
-            </button>
+  type="button"
+  onClick={() => handleTargetingChange('zipCode')}
+  className={cn(
+    "h-[200px] sm:h-[250px] lg:h-[300px] flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 font-manrope",
+    formState.targetingType === 'zipCode' 
+      ? "border-[#EECC6E] bg-[#EECC6E]/10" 
+      : "border-[#EECC6E]/20 hover:border-[#EECC6E]/50 hover:bg-[#EECC6E]/5"
+  )}
+>
+  <MapPin className="h-16 w-16 sm:h-24 sm:w-24 mb-2 sm:mb-3 text-[#EECC6E]" />
+  <h3 className="text-[#EECC6E] text-base sm:text-xl font-manrope font-semibold mb-1 sm:mb-2">
+    Zip Code
+  </h3>
+  <p className="text-xs sm:text-sm text-[#EECC6E]/70 text-center font-manrope">
+    Target specific ZIP codes
+  </p>
+</button>
           </div>
         </div>
 
