@@ -11,7 +11,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Gift } from "lucide-react"
+import Image from "next/image"
 import {
   Tooltip,
   TooltipContent,
@@ -55,6 +55,10 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     }
   }
 
+  const handleTierClick = (leads: number) => {
+    onTotalLeadsChange(leads)
+  }
+
   const handleBlur = () => {
     if (parentTotalLeads < 100 && parentTotalLeads !== 0) {
       setShowMinimumDialog(true)
@@ -83,10 +87,10 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     return 5.0
   }
 
-  const calculateSavingsPercentage = (pricePerLead: number) => {
+  const calculateEffectiveness = (pricePerLead: number) => {
     const basePrice = 5.0
-    const savings = ((basePrice - pricePerLead) / basePrice) * 100
-    return savings.toFixed(1)
+    const improvement = ((basePrice - pricePerLead) / basePrice) * 100
+    return improvement.toFixed(1)
   }
 
   const calculateTotalPrice = (leads: number) => {
@@ -111,7 +115,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${calculateTotalPrice(parentTotalLeads).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
           {parentTotalLeads >= 1000 && (
             <span className="ml-2 text-green-400">
-              ({calculateSavingsPercentage(getPricePerLead(parentTotalLeads))}% savings)
+              (Cost-effectiveness improved by {calculateEffectiveness(getPricePerLead(parentTotalLeads))}%)
             </span>
           )}
         </div>
@@ -123,18 +127,19 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           </h4>
           <div className="grid grid-cols-4 gap-px bg-[#EECC6E]/20 rounded-lg overflow-hidden">
             {[
-              { tier: "Tier 1", leads: "1000+", price: "$4.7", savings: "6" },
-              { tier: "Tier 2", leads: "2000+", price: "$4.3", savings: "14" },
-              { tier: "Tier 3", leads: "3000+", price: "$3.9", savings: "22" },
-              { tier: "Tier 4", leads: "4000+", price: "$3.4", savings: "32", hasGift: true }
+              { tier: "Tier 1", leads: 1000, price: "$4.7" },
+              { tier: "Tier 2", leads: 2000, price: "$4.3" },
+              { tier: "Tier 3", leads: 3000, price: "$3.9" },
+              { tier: "Tier 4", leads: 4000, price: "$3.4", hasGift: true }
             ].map((tier, index) => {
               const isCurrentTier = 
-                parentTotalLeads >= parseInt(tier.leads) && 
-                (index === 3 || parentTotalLeads < parseInt(tier.leads) + 1000);
+                parentTotalLeads >= tier.leads && 
+                (index === 3 || parentTotalLeads < tier.leads + 1000);
               
               return (
                 <div
-                  key={tier.leads}
+                  key={tier.tier}
+                  onClick={() => handleTierClick(tier.leads)}
                   className={cn(
                     "relative group cursor-pointer transition-all duration-300",
                     "bg-black/50",
@@ -146,29 +151,32 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                       {tier.tier}
                     </div>
                     <div className="text-white font-manrope font-medium">
-                      {tier.leads}
+                      {tier.leads}+ leads
                     </div>
                     <div className="text-[#EECC6E] font-manrope font-bold">
                       {tier.price}/lead
-                    </div>
-                    <div className="text-green-400 text-sm font-manrope">
-                      Save {tier.savings}%
                     </div>
                     {tier.hasGift && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Gift 
-                              className={cn(
-                                "w-6 h-6 mx-auto mt-2 transition-all duration-300",
-                                isCurrentTier ? "text-[#EECC6E] animate-pulse" : "text-[#EECC6E]/50"
-                              )}
-                            />
+                            <div className="relative w-8 h-8 mx-auto mt-2">
+                              <Image
+                                src="https://i.pinimg.com/1200x/38/3b/a6/383ba6c08dc4cdf635aa5d489f08fc0c.jpg"
+                                alt="Gift"
+                                layout="fill"
+                                objectFit="contain"
+                                className={cn(
+                                  "transition-opacity duration-300",
+                                  isCurrentTier ? "opacity-100" : "opacity-50"
+                                )}
+                              />
+                            </div>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs bg-black/95 border border-[#EECC6E]/20 p-4">
                             <div className="text-white font-manrope">
                               <p className="font-semibold mb-2">Expert Integration Consultation</p>
-                              <p className="text-sm mb-2">Receive a personalized 1-hour consultation with our lead distribution specialist to optimize your systems and team workflow.</p>
+                              <p className="text-sm mb-2">Schedule a personalized 1-hour strategy session with our lead distribution expert to maximize your team's efficiency and ROI.</p>
                               <p className="text-[#EECC6E] font-bold">Value: $1,000</p>
                             </div>
                           </TooltipContent>
@@ -187,6 +195,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
         </div>
       </div>
 
+      {/* Rest of the component remains the same */}
       <div className="space-y-8">
         <h3 className="text-lg sm:text-xl font-manrope font-bold text-[#EECC6E] tracking-tight">
           <span className="text-[#EECC6E]">* </span>Adjust the amount of leads you receive per day
