@@ -911,14 +911,89 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           />
         </div>
 
-        {/* Webhook URL Section */}
-        <div className="space-y-2">
+        // CURRENT CODE (to be replaced):
+{/* Webhook URL Section */}
+<div className="space-y-2">
   <Label htmlFor="webhookUrl" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3 flex items-center gap-2">
     Webhook URL
     <button
       type="button" // Add this to prevent form submission
       onClick={(e) => {
         e.preventDefault(); // Add this to prevent form submission
+        handleSendTestData();
+      }}
+      className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors"
+    >
+      {testDataText}
+    </button>
+  </Label>
+  <Input
+    id="webhookUrl"
+    name="webhookUrl"
+    type="url"
+    value={formState.webhookUrl}
+    onChange={handleInputChange}
+    className="h-10 sm:h-12 bg-black/50 border-[#EECC6E]/20 text-white text-xs sm:text-sm font-manrope"
+    placeholder="https://example.com/webhook"
+  />
+</div>
+
+// NEW CODE (to replace the above):
+{/* Webhook URL Section */}
+<div className="space-y-2">
+  <Label htmlFor="webhookUrl" className="text-[#EECC6E] text-base sm:text-lg font-manrope font-bold tracking-tight mb-3 flex items-center gap-2">
+    Webhook URL
+    <Dialog>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors"
+        >
+          How-To Guide
+        </button>
+      </DialogTrigger>
+      <DialogContent className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] w-[90vw] max-w-3xl overflow-y-auto bg-black/95 border-[#EECC6E]/20">
+        <DialogHeader>
+          <DialogTitle className="text-[#EECC6E] text-xl font-manrope">How to Set Up Your Webhook</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 p-4">
+          <p className="text-white/80 font-manrope">
+            1. Create a{" "}
+            <a 
+              href="https://www.make.com/en" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-[#EECC6E] hover:underline"
+            >
+              make.com
+            </a>{" "}
+            account (better price and functionalities than Zapier)
+          </p>
+          
+          <div style={{position: 'relative', width: '100%', height: '0px', paddingBottom: '56.250%'}}>
+            <iframe 
+              allow="fullscreen" 
+              allowFullScreen 
+              height="100%" 
+              src="https://streamable.com/e/e4tz56?" 
+              width="100%" 
+              style={{border: 'none', width: '100%', height: '100%', position: 'absolute', left: '0px', top: '0px', overflow: 'hidden'}}
+            />
+          </div>
+
+          <Button
+            onClick={() => document.querySelector('[role="dialog"]')?.closest('dialog')?.close()}
+            className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity"
+          >
+            Close
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
         handleSendTestData();
       }}
       className="bg-[#EECC6E]/10 text-[#EECC6E] text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full hover:bg-[#EECC6E]/20 transition-colors"
