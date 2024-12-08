@@ -3,12 +3,20 @@ import React from "react"
 import * as SliderPrimitive from "@radix-ui/react-slider"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 interface LeadsPerDaySliderProps {
   value: number
   onChange: (value: number) => void
   onTotalLeadsChange: (value: number) => void
-  totalLeads: number  // Add this prop
+  totalLeads: number
   textSize?: string
 }
 
@@ -16,28 +24,38 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   value, 
   onChange,
   onTotalLeadsChange,
-  totalLeads: parentTotalLeads, // Rename to avoid confusion
+  totalLeads: parentTotalLeads,
   textSize 
 }) => {
   const [leadsPerDay, setLeadsPerDay] = React.useState(value)
+  const [showMinimumDialog, setShowMinimumDialog] = React.useState(false)
 
   React.useEffect(() => {
     setLeadsPerDay(value)
   }, [value])
 
   const handleTotalLeadsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const inputValue = e.target.value.replace(/^0+/, '')
-  
-  if (inputValue === '' || inputValue === '0') {
-    onTotalLeadsChange(0)
-    return
+    const inputValue = e.target.value.replace(/^0+/, '')
+    
+    if (inputValue === '' || inputValue === '0') {
+      onTotalLeadsChange(0)
+      return
+    }
+    
+    const numValue = parseInt(inputValue)
+    if (!isNaN(numValue)) {
+      if (numValue < 100) {
+        setShowMinimumDialog(true)
+        return
+      }
+      onTotalLeadsChange(numValue)
+    }
   }
-  
-  const numValue = parseInt(inputValue)
-  if (!isNaN(numValue) && numValue >= 0) {
-    onTotalLeadsChange(numValue)
+
+  const setToMinimum = () => {
+    onTotalLeadsChange(100)
+    setShowMinimumDialog(false)
   }
-}
 
   const handleLeadsPerDayChange = (newValue: number[]) => {
     setLeadsPerDay(newValue[0])
@@ -65,6 +83,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${parentTotalLeads * 5}
         </div>
       </div>
+
       <div className="space-y-8">
         <h3 className="text-lg sm:text-xl font-manrope font-bold text-[#EECC6E] tracking-tight">
           <span className="text-[#EECC6E]">* </span>Adjust the amount of leads you receive per day
@@ -95,6 +114,25 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           {leadsPerDay} {leadsPerDay === 1 ? 'lead' : 'leads'} per day = {calculateDays(parentTotalLeads, leadsPerDay)} days
         </div>
       </div>
+
+      <Dialog open={showMinimumDialog} onOpenChange={setShowMinimumDialog}>
+        <DialogContent className="bg-black/95 border-[#EECC6E]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#EECC6E] text-xl font-manrope">Minimum Order Required</DialogTitle>
+          </DialogHeader>
+          <div className="text-white/80 font-manrope py-4">
+            The minimum order is 100 leads.
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={setToMinimum}
+              className="w-full bg-gradient-to-r from-[#EECC6E] via-[#F7DFA4] to-[#EECC6E] text-black font-manrope font-semibold hover:opacity-90 transition-opacity"
+            >
+              Set to 100 leads
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
