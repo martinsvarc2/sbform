@@ -44,11 +44,13 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     
     const numValue = parseInt(inputValue)
     if (!isNaN(numValue)) {
-      if (numValue < 100) {
-        setShowMinimumDialog(true)
-        return
-      }
       onTotalLeadsChange(numValue)
+    }
+  }
+
+  const handleBlur = () => {
+    if (parentTotalLeads < 100 && parentTotalLeads !== 0) {
+      setShowMinimumDialog(true)
     }
   }
 
@@ -77,6 +79,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           inputMode="numeric"
           value={parentTotalLeads === 0 ? '' : parentTotalLeads.toString()}
           onChange={handleTotalLeadsChange}
+          onBlur={handleBlur}
           className="h-14 bg-black/50 border-[#EECC6E]/20 text-white text-xl font-manrope text-center"
         />
         <div className="text-[#EECC6E] text-lg sm:text-xl font-semibold text-center font-manrope mt-4">
