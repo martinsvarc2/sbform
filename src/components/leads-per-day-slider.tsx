@@ -124,7 +124,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
           {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${calculateTotalPrice(parentTotalLeads).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
           {parentTotalLeads >= 1000 && (
             <span className="ml-2 text-green-400 text-sm">
-              (Cost-effectiveness improved by {calculateEffectiveness(getPricePerLead(parentTotalLeads)).percentage}% (${calculateEffectiveness(getPricePerLead(parentTotalLeads)).savings}))
+              (Cost-effectiveness improved by {calculateEffectiveness(getPricePerLead(parentTotalLeads)).percentage}% (${calculateEffectiveness(getPricePerLead(parentTotalLeads)).savings})
             </span>
           )}
         </div>
@@ -175,11 +175,11 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger 
-                  className={cn(
-                    "relative overflow-hidden bg-black/50",
-                    parentTotalLeads >= 4000 ? "bg-[#EECC6E]/10" : "hover:bg-[#EECC6E]/5"
-                  )}
-                >
+  className={cn(
+    "relative overflow-hidden bg-black/50 pointer-events-none",
+    parentTotalLeads >= 4000 ? "bg-[#EECC6E]/10" : ""
+  )}
+>
                   <div className="relative h-full">
                     {/* Tier info */}
                     <div 
@@ -209,7 +209,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
                       <div className="relative h-full flex items-center justify-center p-4">
                         <img 
-                          src="https://res.cloudinary.com/dmbzcxhjn/image/upload/383ba6c08dc4cdf635aa5d489f08fc0c_dd1gbd.jpg"
+                          src="https://res.cloudinary.com/dmbzcxhjn/image/upload/383ba6c08dc4cdf635aa5d489f08fc0c-removebg-preview_tkovqq.png"
                           alt="Gift"
                           className="w-16 h-16 object-contain"
                         />
