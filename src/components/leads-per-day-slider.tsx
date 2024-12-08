@@ -45,7 +45,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   React.useEffect(() => {
     const interval = setInterval(() => {
       setShowGift(prev => !prev)
-    }, 3000)
+    }, 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -199,7 +199,7 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
                       <div className="relative h-full flex items-center justify-center p-4">
                         <img 
-                          src="https://res.cloudinary.com/dmbzcxhjn/image/upload/383ba6c08dc4cdf635aa5d489f08fc0c_dd1gbd.jpg"
+                          src="https://res.cloudinary.com/dmbzcxhjn/image/upload/383ba6c08dc4cdf635aa5d489f08fc0c-removebg-preview_tkovqq.png"
                           alt="Gift"
                           className="w-16 h-16 object-contain"
                         />
