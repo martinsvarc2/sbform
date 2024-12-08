@@ -11,6 +11,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Gift } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface LeadsPerDaySliderProps {
   value: number
@@ -68,16 +75,20 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
     return Math.ceil(total / perDay)
   }
 
-  // Calculate price per lead based on volume
   const getPricePerLead = (totalLeads: number) => {
     if (totalLeads >= 4000) return 3.4
     if (totalLeads >= 3000) return 3.9
     if (totalLeads >= 2000) return 4.3
     if (totalLeads >= 1000) return 4.7
-    return 5.0 // Default price
+    return 5.0
   }
 
-  // Calculate total price with volume discount
+  const calculateSavingsPercentage = (pricePerLead: number) => {
+    const basePrice = 5.0
+    const savings = ((basePrice - pricePerLead) / basePrice) * 100
+    return savings.toFixed(1)
+  }
+
   const calculateTotalPrice = (leads: number) => {
     return leads * getPricePerLead(leads)
   }
@@ -98,42 +109,80 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
         />
         <div className="text-[#EECC6E] text-lg sm:text-xl font-semibold text-center font-manrope mt-4">
           {parentTotalLeads} {parentTotalLeads === 1 ? 'lead' : 'leads'} = ${calculateTotalPrice(parentTotalLeads).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          {parentTotalLeads >= 1000 && (
+            <span className="ml-2 text-green-400">
+              ({calculateSavingsPercentage(getPricePerLead(parentTotalLeads))}% savings)
+            </span>
+          )}
         </div>
 
         {/* Volume Pricing Table */}
         <div className="mt-8 p-4 bg-black/30 rounded-xl border border-[#EECC6E]/20 backdrop-blur-sm">
-          <h4 className="text-center text-[#EECC6E] font-manrope font-semibold mb-4">
+          <h4 className="text-center text-[#EECC6E] font-manrope font-semibold mb-6 text-2xl">
             Volume Pricing
           </h4>
           <div className="grid grid-cols-4 gap-px bg-[#EECC6E]/20 rounded-lg overflow-hidden">
             {[
-              { leads: "1000+", price: "$4.7" },
-              { leads: "2000+", price: "$4.3" },
-              { leads: "3000+", price: "$3.9" },
-              { leads: "4000+", price: "$3.4" }
-            ].map((tier, index) => (
-              <div
-                key={tier.leads}
-                className={cn(
-                  "relative group cursor-pointer transition-all duration-300",
-                  "bg-black/50 hover:bg-[#EECC6E]/10",
-                  parentTotalLeads >= parseInt(tier.leads) && "bg-[#EECC6E]/10"
-                )}
-              >
-                <div className="p-4 text-center space-y-2">
-                  <div className="text-white font-manrope font-medium">
-                    {tier.leads}
+              { tier: "Tier 1", leads: "1000+", price: "$4.7", savings: "6" },
+              { tier: "Tier 2", leads: "2000+", price: "$4.3", savings: "14" },
+              { tier: "Tier 3", leads: "3000+", price: "$3.9", savings: "22" },
+              { tier: "Tier 4", leads: "4000+", price: "$3.4", savings: "32", hasGift: true }
+            ].map((tier, index) => {
+              const isCurrentTier = 
+                parentTotalLeads >= parseInt(tier.leads) && 
+                (index === 3 || parentTotalLeads < parseInt(tier.leads) + 1000);
+              
+              return (
+                <div
+                  key={tier.leads}
+                  className={cn(
+                    "relative group cursor-pointer transition-all duration-300",
+                    "bg-black/50",
+                    isCurrentTier ? "bg-[#EECC6E]/10" : "hover:bg-[#EECC6E]/5"
+                  )}
+                >
+                  <div className="p-4 text-center space-y-2">
+                    <div className="text-[#EECC6E] font-manrope font-bold mb-2">
+                      {tier.tier}
+                    </div>
+                    <div className="text-white font-manrope font-medium">
+                      {tier.leads}
+                    </div>
+                    <div className="text-[#EECC6E] font-manrope font-bold">
+                      {tier.price}/lead
+                    </div>
+                    <div className="text-green-400 text-sm font-manrope">
+                      Save {tier.savings}%
+                    </div>
+                    {tier.hasGift && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Gift 
+                              className={cn(
+                                "w-6 h-6 mx-auto mt-2 transition-all duration-300",
+                                isCurrentTier ? "text-[#EECC6E] animate-pulse" : "text-[#EECC6E]/50"
+                              )}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs bg-black/95 border border-[#EECC6E]/20 p-4">
+                            <div className="text-white font-manrope">
+                              <p className="font-semibold mb-2">Expert Integration Consultation</p>
+                              <p className="text-sm mb-2">Receive a personalized 1-hour consultation with our lead distribution specialist to optimize your systems and team workflow.</p>
+                              <p className="text-[#EECC6E] font-bold">Value: $1,000</p>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </div>
-                  <div className="text-[#EECC6E] font-manrope font-bold">
-                    {tier.price}/lead
-                  </div>
+                  {/* Highlight Current Tier */}
+                  {isCurrentTier && (
+                    <div className="absolute inset-0 border-2 border-[#EECC6E] rounded-lg pointer-events-none" />
+                  )}
                 </div>
-                {/* Highlight Current Tier */}
-                {parentTotalLeads >= parseInt(tier.leads) && (
-                  <div className="absolute inset-0 border-2 border-[#EECC6E] rounded-lg pointer-events-none" />
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>
