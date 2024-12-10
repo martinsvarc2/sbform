@@ -153,17 +153,19 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                     isCurrentTier ? "bg-[#EECC6E]/10" : "hover:bg-[#EECC6E]/5"
                   )}
                 >
-                  <div className="p-4 text-center space-y-2">
-                    <div className="text-[#EECC6E] font-manrope font-bold mb-2">
-                      {tier.tier}
-                    </div>
-                    <div className="text-white font-manrope font-medium">
-                      {tier.leads}+ leads
-                    </div>
-                    <div className="text-[#EECC6E] font-manrope font-bold text-sm sm:text-base">
-                    {tier.price}/lead
-                    </div>
-                  </div>
+                  <div className="p-4 text-center h-full flex flex-col justify-between">
+  <div className="text-[#EECC6E] font-manrope font-bold">
+    {tier.tier}
+  </div>
+  <div className="flex flex-col justify-center flex-grow">
+    <div className="text-white font-manrope font-medium text-xs sm:text-base">
+      {tier.leads}+ leads
+    </div>
+    <div className="text-[#EECC6E] font-manrope font-bold text-xs sm:text-base mt-1">
+      {tier.price}/lead
+    </div>
+  </div>
+</div>
                   {isCurrentTier && (
                     <div className="absolute inset-0 border-2 border-[#EECC6E] rounded-lg pointer-events-none" />
                   )}
@@ -182,23 +184,25 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
   onClick={(e) => e.preventDefault()} // prevent any click events
 >
                   <div className="relative h-full">
-                    {/* Tier info */}
-                    <div 
-                      className={cn(
-                        "absolute inset-0 p-4 text-center space-y-2 transition-all duration-500 transform",
-                        showGift ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
-                      )}
-                    >
-                      <div className="text-[#EECC6E] font-manrope font-bold mb-2">
-                        Tier 4
-                      </div>
-                      <div className="text-white font-manrope font-medium">
-                        4000+ leads
-                      </div>
-                      <div className="text-[#EECC6E] font-manrope font-bold text-sm sm:text-base">
-                      $3.4/lead
-                      </div>
-                    </div>
+  {/* Tier info */}
+  <div 
+    className={cn(
+      "absolute inset-0 p-4 text-center h-full flex flex-col justify-between transition-all duration-500 transform",
+      showGift ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+    )}
+  >
+    <div className="text-[#EECC6E] font-manrope font-bold">
+      Tier 4
+    </div>
+    <div className="flex flex-col justify-center flex-grow">
+      <div className="text-white font-manrope font-medium text-xs sm:text-base">
+        4000+ leads
+      </div>
+      <div className="text-[#EECC6E] font-manrope font-bold text-xs sm:text-base mt-1">
+        $3.4/lead
+      </div>
+    </div>
+  </div>
                     
                     {/* Gift image */}
                     <div 
