@@ -160,8 +160,8 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                     <div className="text-white font-manrope font-medium">
                       {tier.leads}+ leads
                     </div>
-                    <div className="text-[#EECC6E] font-manrope font-bold">
-                      {tier.price}/lead
+                    <div className="text-[#EECC6E] font-manrope font-bold text-sm sm:text-base">
+                    {tier.price}/lead
                     </div>
                   </div>
                   {isCurrentTier && (
@@ -195,8 +195,8 @@ const LeadsPerDaySlider: React.FC<LeadsPerDaySliderProps> = ({
                       <div className="text-white font-manrope font-medium">
                         4000+ leads
                       </div>
-                      <div className="text-[#EECC6E] font-manrope font-bold">
-                        $3.4/lead
+                      <div className="text-[#EECC6E] font-manrope font-bold text-sm sm:text-base">
+                      $3.4/lead
                       </div>
                     </div>
                     
